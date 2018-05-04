@@ -19,35 +19,35 @@ cat ../ChIP-seq/CTCF/CTCF.CH12.mergesort.narrowPeak | awk 'BEGIN {i=1}; {printf 
 cat ../ChIP-seq/CTCF/CTCF.MEL.mergesort.narrowPeak | awk 'BEGIN {i=1}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
 # RAD21
-cat RAD21.GM12878.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/RAD21/RAD21.GM12878.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat RAD21.K562.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/RAD21/RAD21.K562.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat RAD21.CH12.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/RAD21/RAD21.CH12.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat RAD21.MEL.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/RAD21/RAD21.MEL.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
 
 # SMC3
-cat SMC3.GM12878.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/SMC3/SMC3.GM12878.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat SMC3.K562.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/SMC3/SMC3.K562.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat SMC3.CH12.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/SMC3/SMC3.CH12.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat SMC3.MEL.mergesort.narrowPeak | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chip_seq.dat
+cat ../ChIP-seq/SMC3/SMC3.MEL.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tSMC3\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
 
 ####
 # CTCF Motifs Table
-cat hg19.CTCF.ren.motif_predictions.bed | grep -v "random" | grep -v "hap" | grep -v "Un" | grep -v "chrM" | awk -v i=1 '{printf "%d\t%s\t%d\t%d\t%s\t%f\tCTCF\thg19\n", i, $1, $2, $3, $6, $7; i++}' > /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/motifs.dat
+cat ../motifs/hg19.CTCF.ren.motif_predictions.bed | grep -v "random" | grep -v "hap" | grep -v "Un" | grep -v "chrM" | awk -v i=1 '{printf "%d\t%s\t%d\t%d\t%s\t%f\tCTCF\thg19\n", i, $1, $2, $3, $6, $7; i++}' > motifs.dat
 
-cat mm9.CTCF.ren.motif_predictions.bed | grep -v "random" | grep -v "hap" | grep -v "Un" | grep -v "chrM" | awk -v i=$(tail -n 1 /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/motifs.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%f\tCTCF\tmm9\n", i, $1, $2, $3, $6, $7; i++}' >> /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/motifs.dat
+cat ../motifs/mm9.CTCF.ren.motif_predictions.bed | grep -v "random" | grep -v "hap" | grep -v "Un" | grep -v "chrM" | awk -v i=$(tail -n 1 motifs.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%f\tCTCF\tmm9\n", i, $1, $2, $3, $6, $7; i++}' >> motifs.dat
 
 
 ####
 # ChIA-PET loops
-cat CTCF_ChIA-PET.with_CTCF.trimmed.bedpe | awk 'BEGIN {i=1}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tCTCF\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  > /nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/chia_pet.dat
+cat ../ChIA-PET/CTCF/CTCF_ChIA-PET.with_CTCF.trimmed.bedpe | awk 'BEGIN {i=1}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tCTCF\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  > chia_pet.dat
 
 
 ################
