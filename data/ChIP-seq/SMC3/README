@@ -1,0 +1,41 @@
+# SMC3 conservative/optimal IDR peaks from ENCODE
+
+####
+# GM12878
+
+xargs -n 1 curl -O -L < files.GM12878.txt
+
+# Merge data with output following narrowPeak conventions. Signal value and score are averaged over all input peaks.
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i]; QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > SMC3.GM12878.mergesort.narrowPeak
+
+# sort, bgzip and tabix index
+cat SMC3.GM12878.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > SMC3.GM12878.mergesort.narrowPeak.bgz
+tabix -p bed SMC3.GM12878.mergesort.narrowPeak.bgz
+
+# Save space by deleting source beds
+rm ENC*.bed.gz
+
+
+####
+# K562
+xargs -n 1 curl -O -L < files.K562.txt
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i];    QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > SMC3.K562.mergesort.narrowPeak
+cat SMC3.K562.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > SMC3.K562.mergesort.narrowPeak.bgz
+tabix -p bed SMC3.K562.mergesort.narrowPeak.bgz
+rm ENCFF*
+
+####
+# CH12
+xargs -n 1 curl -O -L < files.CH12.txt
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i];    QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > SMC3.CH12.mergesort.narrowPeak
+cat SMC3.CH12.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > SMC3.CH12.mergesort.narrowPeak.bgz
+tabix -p bed SMC3.CH12.mergesort.narrowPeak.bgz
+rm ENCFF*
+
+####
+# MEL
+xargs -n 1 curl -O -L < files.MEL.txt
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i];    QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > SMC3.MEL.mergesort.narrowPeak
+cat SMC3.MEL.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > SMC3.MEL.mergesort.narrowPeak.bgz
+tabix -p bed SMC3.MEL.mergesort.narrowPeak.bgz
+rm ENCFF*

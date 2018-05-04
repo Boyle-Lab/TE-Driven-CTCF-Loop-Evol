@@ -1,0 +1,22 @@
+# Analysis steps for binomial and permutation-based enrichment tests for CTCF binding
+# in transposable element families.
+
+####
+# First step is performed on the hadoop cluster...
+
+# Find the intersection between CTCF binding sites
+# and TE insertions in each cell type using a hive query.
+# Commands are in ctcf_te_overlaps.q.
+
+# Combine the resulting data files...
+hdfs dfs -cat ctcf_te_enrichment/* > ctcf_te_intersection.all.txt
+
+####
+# Remaining analysis steps are in R.
+#
+# shared.R has commands for reading in the data tables used
+# by both binomial and permutation tests.
+#
+# binomial_tests.R has commands for performing the binomial enrichment tests.
+#
+# permutation_tests.R has commands for performing the permutation-based enrichment tests.

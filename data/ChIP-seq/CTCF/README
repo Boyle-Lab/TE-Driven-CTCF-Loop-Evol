@@ -1,0 +1,69 @@
+# CTCF conservative/optimal IDR peaks from ENCODE
+
+####
+# GM12878
+
+# Download data from ENCODE
+xargs -n 1 curl -O -L < files.GM12878.txt
+
+# Merge peaks for GM12878 with output following narrowPeak conventions. Signal value and score are averaged over all input peaks.
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i]; QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > CTCF.GM12878.mergesort.narrowPeak
+
+# sort, bgzip and tabix index
+cat CTCF.GM12878.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > CTCF.GM12878.mergesort.narrowPeak.bgz
+tabix -p bed CTCF.GM12878.mergesort.narrowPeak.bgz
+
+# Save space by deleting source beds
+rm ENC*.bed.gz
+
+
+####
+# K562
+
+xargs -n 1 curl -O -L < files.K562.txt
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i];  QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > CTCF.K562.mergesort.narrowPeak
+cat CTCF.K562.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > CTCF.K562.mergesort.narrowPeak.bgz
+tabix -p bed CTCF.K562.mergesort.narrowPeak.bgz
+rm ENCFF*
+
+
+####
+# CH12
+
+xargs -n 1 curl -O -L < files.CH12.txt
+# Unfortunately, two of these files are in broadPeak format (no peak locations!).
+# Let's dummy these up so they are in the expected format, using the center of
+# the region as our "best guess" for the peak location...
+for file in ENCFF001YEI.bed.gz ENCFF001YEJ.bed.gz ; do mv $file $file.bak; zcat $file.bak | awk '{printf "%s\t%d\n", $0, (($2+$3)/2)-$2}' | gzip -c > $file ; done
+rm *.bak
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i];   QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > CTCF.CH12.mergesort.narrowPeak
+cat CTCF.CH12.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > CTCF.CH12.mergesort.narrowPeak.bgz
+tabix -p bed CTCF.CH12.mergesort.narrowPeak.bgz
+rm ENCFF*
+
+####
+# MEL
+
+xargs -n 1 curl -O -L < files.MEL.txt
+# The first three of these files are broadPeak...
+for file in ENCFF001YGT.bed.gz ENCFF001YGU.bed.gz ENCFF001YAS.bed.gz ; do  mv $file $file.bak; zcat $file.bak | awk '{printf "%s\t%d\n", $0, (($2+$3)/2)-$2}' | gzip -c > $file ; done
+rm *.bak
+bedtools merge -i <(zcat ENCFF* | bedtools sort) -c 2,3,5,7,8,9,10 -o collapse -delim "," | awk '{ N=split($4, A, ","); split($5, B, ","); split($6, C, ","); split($7, D, ","); split($8, E, ","); split($9, F, ","); split($10, G, ","); SCORE = 0; SVAL = 0; PVAL = 0; QVAL = 0; for (i=1; i<=N; i++) { SCORE += C[i]; SVAL += D[i]; PVAL += E[i];    QVAL += F[i] }; TOT = 0; for (i=1; i<=N; i++) { TOT+=(A[i]+G[i]) }; printf "%s\t%d\t%d\t.\t%d\t.\t%.6f\t%.6f\t%.6f\t%d\n", $1, $2, $3, SCORE/N, SVAL/N, PVAL/N, QVAL/N, (TOT/N)-$2 }' > CTCF.MEL.mergesort.narrowPeak
+cat CTCF.MEL.mergesort.narrowPeak | sort -k1,1 -k2,2n | bgzip -c > CTCF.MEL.mergesort.narrowPeak.bgz
+tabix -p bed CTCF.MEL.mergesort.narrowPeak.bgz
+rm ENCFF*
+
+####
+# Merged hg19 and mm9 narrowPeak files (merged across cells to get union set)
+bedtools merge -i <(cat CTCF.GM12878.mergesort.narrowPeak CTCF.K562.mergesort.narrowPeak | bedtools sort) > hg19.merged.narrowPeak
+bedtools merge -i <(cat CTCF.CH12.mergesort.narrowPeak CTCF.MEL.mergesort.narrowPeak | bedtools sort) > mm9.merged.narrowPeak
+
+
+####
+# Get the number of unique peaks for each cell. The difference between these line counts
+# and the total number of line counts for the appropriate species is the number of CTCF
+# sites shared between both cells.
+bedtools intersect -v -a hg19.merged.txt -b CTCF.K562.mergesort.narrowPeak -wa | wc -l
+bedtools intersect -v -a hg19.merged.txt -b CTCF.GM12878.mergesort.narrowPeak -wa | wc -l
+bedtools intersect -v -a mm9.merged.txt -b CTCF.MEL.mergesort.narrowPeak -wa | wc -l
+bedtools intersect -v -a mm9.merged.txt -b CTCF.CH12.mergesort.narrowPeak -wa | wc -l

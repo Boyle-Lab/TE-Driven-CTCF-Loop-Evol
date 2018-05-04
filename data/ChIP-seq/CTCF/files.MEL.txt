@@ -1,0 +1,5 @@
+https://www.encodeproject.org/files/ENCFF001YGT/@@download/ENCFF001YGT.bed.gz
+https://www.encodeproject.org/files/ENCFF001YGU/@@download/ENCFF001YGU.bed.gz
+https://www.encodeproject.org/files/ENCFF001YAS/@@download/ENCFF001YAS.bed.gz
+https://www.encodeproject.org/files/ENCFF001YJI/@@download/ENCFF001YJI.bed.gz
+https://www.encodeproject.org/files/ENCFF001YJH/@@download/ENCFF001YJH.bed.gz
