@@ -1,0 +1,9 @@
+# CTCF motif predictions with a loose threshold using a custom script. Prediction scores
+# are simple log-odds scores, and all scores > 0 are retained in the prediction sets.
+# Genomic sequences are from UCSC, builds hg19 (human) and mm9 (mouse). These can be
+# obtained from the UCSC download portal. All chromosomes were concatenated into hg19.fa
+# and mm9.fa.
+
+# Make predictions in each species:
+score_motifs.pl CTCF.ren.meme /data/UCSC/FASTA/hg19/hg19.fa -nthreads 8 -prefix hg19.CTCF.ren -genomic_bed
+score_motifs.pl CTCF.ren.meme /data/UCSC/FASTA/mm9/mm9.fa -nthreads 8 -prefix mm9.CTCF.ren -genomic_bed
