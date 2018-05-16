@@ -1,0 +1,36 @@
+# Procedures for analyzing species-specific word content of CTCF-enriched TEs,
+# which reproduces procedures reported in: Schmidt, D., et al. (2012). Cell, 148(1-2), 335–348.
+#
+# In particular, we wanted to determine the species-specific word content of the TE families
+# we observed CTCF-binding enrichments for in human, to see if this shed any light on why
+# they had not been observed by Schmidt et al. previously. We hypothesized that, although
+# they are strongly enriched for CTCF binding, the families may not be enriched for species-
+# specific k-mers. However, our findings contradict this hypothesis and leave doubt as to why
+# human-specific enrichments were not observed in the Schmidt analysis.
+
+
+# First, make CTCF motif predictions within CTCF-bound transposon insertions.
+
+bedtools intersect -a <(zcat /data/adadiehl/repeatMasker/hg19.rmsk.bed.gz | grep -v "random" | grep -v "hap" | grep -v "Un" | grep -v "chrM" | awk '{split($4, A, "."); if (A[2] != "Low_complexity" && A[2] != "Satellite" && A[2] != "Simple_repeat" && A[2] != "tRNA" && A[2] != "rRNA" && A[2] != "scRNA" && A[2] != "snRNA" && A[2] != "srpRNA") {printf "%s\t%d\t%d\t%s\n", $1, $2, $3, A[1]}}') -b <(awk '{printf "%s\t%d\t%d\n", $1, ($2+$10)-1, ($2+$10)+1}' ~/mouseENCODE.new/3D-Prediction/data/ChIP-seq/CTCF/hg19.merged.narrowPeak) -wa -u > ctcf_bound_repeats.hg19.bed
+
+bedtools intersect -a <(zcat /data/adadiehl/repeatMasker/mm9.rmsk.bed.gz | grep -v "random" | grep -v "hap" | grep -v "Un" | grep -v "chrM" | awk '{split($4, A, "."); if (A[2] != "Low_complexity" && A[2] != "Satellite" && A[2] != "Simple_repeat" && A[2] != "tRNA" && A[2] != "rRNA" && A[2] != "scRNA" && A[2] != "snRNA" && A[2] != "srpRNA") {printf "%s\t%d\t%d\t%s\n", $1, $2, $3, A[1]}}') -b <(awk '{printf "%s\t%d\t%d\n", $1, ($2+$10)-1, ($2+$10)+1}' ~/mouseENCODE.new/3D-Prediction/data/ChIP-seq/CTCF/mm9.merged.narrowPeak) -wa -u > ctcf_bound_repeats.mm9.bed
+
+bedtools getfasta -fi /data/motifs/FIMO/hg19.fa -bed ctcf_bound_repeats.hg19.bed -name -fo hg19.bound_rmsk.fa
+bedtools getfasta -fi /data/motifs/FIMO/mm9.fa -bed ctcf_bound_repeats.mm9.bed -name -fo mm9.bound_rmsk.fa
+
+mkdir {bound_rmsk_hg19,bound_rmsk_mm9}
+
+cd /data/mouseENCODE.new/analysis/repeatmasker/whole_genome/word_counts/bound_rmsk_hg19/
+/data/apps/meme/bin/fimo --max-stored-scores 1000000 /data/motifs/CTCF.ren.meme ../hg19.bound_rmsk.fa
+
+cd /data/mouseENCODE.new/analysis/repeatmasker/whole_genome/word_counts/bound_rmsk_mm9/
+/data/apps/meme/bin/fimo --max-stored-scores 1000000 /data/motifs/CTCF.ren.meme ../mm9.bound_rmsk.fa
+
+cd /home/adadiehl/mouseENCODE.new/repeatmasker/whole_genome/word_counts
+cat bound_rmsk_hg19/fimo_out/fimo.txt | awk '{if (NR > 1) {printf "%s\t%d\t%d\t.\t%s\t%s\t%s\n", $2, $3, $4, $7, $5, $9}}' > CTCF.bound_rmsk.hg19.bed
+cat bound_rmsk_mm9/fimo_out/fimo.txt | awk '{if (NR > 1) {printf "%s\t%d\t%d\t.\t%s\t%s\t%s\n", $2, $3, $4, $7, $5, $9}}' > CTCF.bound_rmsk.mm9.bed
+
+# Second, normalize counts per-species, calculate odds ratios for species-specificity, and run
+# Fisher's exact tests for enrichment in TE families. Steps for this are in calc-word-enrichments.R
+
+# That's it!

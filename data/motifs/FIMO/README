@@ -1,0 +1,16 @@
+# Preparation of FIMO based motif predictions in human and mouse genomes.
+mkdir {hg19,mm9}
+
+# Make predictions in human
+cd hg19
+fimo --max-stored-scores 1000000 ../../CTCF.ren.meme ../hg19.fa
+cd ..
+
+# Make predictions in mouse
+cd mm9
+fimo --max-stored-scores 1000000 ../../CTCF.ren.meme ../mm9.fa
+cd ..
+
+# Reformat predictions as bed files
+cat hg19/fimo_out/fimo.txt | awk '{if (NR > 1) {printf "%s\t%d\t%d\t.\t%s\t%s\t%s\n", $2, $3, $4, $7, $5, $9}}' > CTCF.hg19.bed
+cat mm9/fimo_out/fimo.txt | awk '{if (NR > 1) {printf "%s\t%d\t%d\t.\t%s\t%s\t%s\n", $2, $3, $4, $7, $5, $9}}' > CTCF.mm9.bed
