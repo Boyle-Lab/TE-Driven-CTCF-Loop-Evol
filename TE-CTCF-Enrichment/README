@@ -1,5 +1,6 @@
 # Analysis steps for binomial and permutation-based enrichment tests for CTCF binding
-# in transposable element families.
+# in transposable element families, and for TE insertion age estimation within CTCF-
+# binding-enriched TE types.
 
 ####
 # First step is finding the intersections between CTCF sites
@@ -105,3 +106,7 @@ hdfs dfs -cat ctcf_te_enrichment/* > ctcf_te_intersection.all.txt
 # binomial_tests.R has commands for performing the binomial enrichment tests.
 #
 # permutation_tests.R has commands for performing the permutation-based enrichment tests.
+
+####
+# Age estimation (entire analysis in R) steps are in estimate_te_ages.R
+# These results are presented in Figure 1E.
