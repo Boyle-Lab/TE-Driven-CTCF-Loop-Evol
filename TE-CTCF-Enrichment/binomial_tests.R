@@ -87,7 +87,7 @@ dev.off()
 
 
 ####
-# Figure 1d: Euler diagram of enriched families by cell.
+# Supplemental figure 1b: Euler diagram of enriched families by cell.
 library(venneuler)
 dat = ctcf_te_enr[which((ctcf_te_enr$pbinom_cor.GM12878 <= 0.0001 & ctcf_te_enr$te_ctcf_count.GM12878 >= 25 & ctcf_te_enr$obs_freq.GM12878 >= 0.01) | (ctcf_te_enr$pbinom_cor.K562 <= 0.0001 & ctcf_te_enr$te_ctcf_count.K562 >= 25 & ctcf_te_enr$obs_freq.K562 >= 0.01) | (ctcf_te_enr$pbinom_cor.CH12 <= 0.0001 & ctcf_te_enr$te_ctcf_count.CH12 >= 25 & ctcf_te_enr$obs_freq.CH12 >= 0.01) | (ctcf_te_enr$pbinom_cor.MEL <= 0.0001 & ctcf_te_enr$te_ctcf_count.MEL >= 25 & ctcf_te_enr$obs_freq.MEL >= 0.01)),c(6,12,18,24)]
 dat[is.na(dat)] = 1
@@ -101,7 +101,7 @@ dev.off()
 
 
 ####
-# Supplemental figure 1: binding frequencies for all enriched TE families.
+# Supplemental figure 1a: binding frequencies for all enriched TE families.
 dat = ctcf_te_enr[which((ctcf_te_enr$pbinom_cor.GM12878 <= 0.0001 & ctcf_te_enr$te_ctcf_count.GM12878 >= 25 & ctcf_te_enr$obs_freq.GM12878 >= 0.01) | (ctcf_te_enr$pbinom_cor.K562 <= 0.0001 & ctcf_te_enr$te_ctcf_count.K562 >= 25 & ctcf_te_enr$obs_freq.K562 >= 0.01) | (ctcf_te_enr$pbinom_cor.CH12 <= 0.0001 & ctcf_te_enr$te_ctcf_count.CH12 >= 25 & ctcf_te_enr$obs_freq.CH12 >= 0.01) | (ctcf_te_enr$pbinom_cor.MEL <= 0.0001 & ctcf_te_enr$te_ctcf_count.MEL >= 25 & ctcf_te_enr$obs_freq.MEL >= 0.01)),c(3,9,15,21)]
 dat = -log2(dat)
 dat$family = rownames(dat)

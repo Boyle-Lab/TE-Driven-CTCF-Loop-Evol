@@ -1,44 +1,22 @@
 # Reciprocal-best liftover chains were prepared based on the human hg19 to mouse mm9 liftover chain from UCSC.
-# The standard hg19 liftover chain was obtained from UCSC:
+# All liftover chain were obtained from the UCSC download portal:
 # http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToMm9.over.chain.gz
+
+
 # The conversion to reciprocal-best chains is described here:
 # http://genomewiki.ucsc.edu/index.php/HowTo:_Syntenic_Net_or_Reciprocal_Best
+# Conversion was achieved by calling the do_rbest.sh shell script for
+# each pair of species.
 
-# Swap $SPP1-best chains to be $SPP2-referenced:
-chainStitchId $SPP1.$SPP2.over.chain.gz stdout \
-| chainSwap stdin stdout \
-| chainSort stdin $SPP2.$SPP1.tBest.chain
+# Human-mouse (and reverse)
+do_rbest.sh hg19 mm9 chrom.sizes
 
-# Net those on $SPP2 to get $SPP2-ref'd reciprocal best net:
-chainPreNet $SPP2.$SPP1.tBest.chain \
-  $SIZES_DIR/{$SPP2,$SPP1}.chrom.sizes stdout \
-  | chainNet -minSpace=1 -minScore=0 \
-    stdin $SIZES_DIR/{$SPP2,$SPP1}.chrom.sizes stdout /dev/null \
-  | netSyntenic stdin stdout \
-  | gzip -c > $SPP2.$SPP1.rbest.net.gz
+# Mouse to dog, horse, and elephant
+do_rbest.sh mm9 canFam2 chrom.sizes
+do_rbest.sh mm9 equCab2 chrom.sizes
+do_rbest.sh mm9 loxAfr3 chrom.sizes
 
-# Extract $SPP2-ref'd reciprocal best chain:
-netChainSubset $SPP2.$SPP1.rbest.net.gz $SPP2.$SPP1.tBest.chain stdout \
-| chainStitchId stdin stdout \
-| gzip -c > $SPP2.$SPP1.rbest.chain.gz
-
-# Swap to get $SPP1-ref'd reciprocal best chain:
-chainSwap $SPP2.$SPP1.rbest.chain.gz stdout \
-| chainSort stdin stdout \
-| gzip -c > $SPP1.$SPP2.rbest.chain.gz
-
-# Net those on $SPP1 to get $SPP1-ref'd reciprocal best net:
-chainPreNet $SPP1.$SPP2.rbest.chain.gz \
-  $SIZES_DIR/{$SPP1,$SPP2}.chrom.sizes stdout \
-    | chainNet -minSpace=1 -minScore=0 \
-      stdin $SIZES_DIR/{$SPP1,$SPP2}.chrom.sizes stdout /dev/null \
-    | netSyntenic stdin stdout \
-    | gzip -c > $SPP1.$SPP2.rbest.net.gz
-
-# *.rbest.rev.chain.gz are reciprocal-best chains that have been swapped
-# for reverse-mapping from target to query
-
-chainStitchId $SPP1.$SPP2.rbest.chain.gz stdout \
-| chainSwap stdin stdout \
-| chainSort stdin stdout \
-| gzip -c >$SPP1.$SPP2.rbest.rev.chain.gz
+# Human to dog, horse, and elephant
+do_rbest.sh hg19 canFam2 chrom.sizes
+do_rbest.sh hg19 equCab2 chrom.sizes
+do_rbest.sh hg19 loxAfr2 chrom.sizes
