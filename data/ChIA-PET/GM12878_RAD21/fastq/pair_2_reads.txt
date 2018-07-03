@@ -1,0 +1,9 @@
+ENCFF046EHU.fastq.gz
+ENCFF053YTJ.fastq.gz
+ENCFF490DFC.fastq.gz
+ENCFF628RQS.fastq.gz
+ENCFF685KXR.fastq.gz
+ENCFF740COY.fastq.gz
+ENCFF812MEF.fastq.gz
+ENCFF814NKV.fastq.gz
+ENCFF913TDQ.fastq.gz

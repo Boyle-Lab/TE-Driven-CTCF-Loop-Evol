@@ -1,0 +1,90 @@
+# Procedures for RAD21 ChIA-pet data processing for human GM12878 cells.
+# Data were sourced from ENCODE, accession ENCSR981FNA.
+
+# Prerequisites:
+# FastQC version 0.11.5
+# BWA version 0.7.16a
+# SAMtools version 1.5
+# BEDTools version 2.26.0
+# hg19 genome, in fasta sequence, and BWA index created with `bwa index`
+# MANGO version 1.2.0, Wolverine branch (https://github.com/adadiehl/mango)
+# MANGO dependencies:
+#    1) Bowtie version 1.1.2 (Not used but required for MANGO to run)
+#    2) MACS2, ersion 2.1.1
+#    3) R version 3.3.3
+
+### PATHS IN SOME OF THE SCRIPTS MAY NEED TO BE CHANGED TO POINT TO THE LOCATIONS OF GENOMES, GENOME INDEXES, ETC., ON YOUR LOCAL SYSTEM.
+### PLEASE CHECK ALL SCRIPTS CAREFULLY PRIOR TO RUNNING!
+
+# Set up the directory structure.
+mkdir -pv {fastq,bam,mango,tmp}
+
+WD=$(pwd)
+FASTQ_DIR=$WD/fastq
+BAM_DIR=$WD/bam
+TMP_DIR=$WD/tmp
+MANGO_DIR=$WD/mango
+
+# Retrieve the fastq sequencing data.
+cd $FASTQ_DIR
+xargs -n 1 curl -O -L < files.txt
+
+# Check quality and adapter content with FastQC
+for file in ENC* ; do
+    fastqc $file
+done
+cd $WD
+
+
+# Align all replicates and read pairs separately.
+for file in $(cat $FASTQ_DIR/pair_1_reads.txt); do
+    ./do_bwa-mem.sh $FASTQ_DIR/$file bam 16
+done
+
+for file in $(cat $FASTQ_DIR/pair_2_reads.txt); do
+    ./do_bwa-mem.sh $FASTQ_DIR/$file $BAM_DIR 16
+done
+
+# Quality check with samtools...
+for file in $BAM_DIR/*.sorted.bam; do
+    samtools flagstat -@ 16 $file > $BAM_DIR/$(basename $file .bam).flagstat
+done
+
+IFS=$'\n'
+for file in $BAM_DIR/*.flagstat; do printf "%s\t%s\n" $file $(grep "%" $file) >> ENCSR981FNA.aln.flagstat ; done
+
+# Conservative filtering process, just based on quality and mappability, using only
+# sam flags 4, 256, and quality 30...
+for file in $BAM_DIR/*.sorted.bam; do
+    ./do_filter_bams.sh $file $BAM_DIR 16
+done
+
+# Sort files by X and Y coordinates to allow bedpe creation
+cd $TMP_DIR
+for file in $BAM_DIR/*.sorted.filtered.bam; do
+    samtools sort -l 9 -T $(basename $file .bam).tmp -O bam -n -@ 16 $file | bedtools bamtobed | awk '{split($0, A, ":"); printf "%s\t%d\t%d\n", $0, A[6], A[7]}' | sort -k7 -k8 -h | awk '{printf "%s\t%d\t%d\t%s\t%d\t%s\n", $1, $2, $3, $4, $5, $6'} | gzip -9 > $BAM_DIR/$(basename $file .sorted.filtered.bam).nsort.filtered.bed.gz
+done
+cd $WD
+
+# Create the bedpe file based on X and Y coordinates
+for file in $FASTQ_DIR/*.pairinfo; do
+    A=($(<$file))
+    ./do_create_bedpe.sh $BAM_DIR/${A[0]}.nsort.filtered.bam $BAM_DIR/${A[1]}.nsort.filtered.bam $BAM_DIR $BAM_DIR/$(basename $file .pairinfo).paired.bedpe
+    gzip -9 $BAM_DIR/$(basename $file .pairinfo).paired.bedpe
+done
+
+# Combine replicates. Note that MANGO does not like this to be gzipped!
+zcat $BAM_DIR/*.bedpe > $BAM_DIR/ENCSR981FNA.paired.bedpe
+
+# Run the MANGO pipeline from stage 3.
+./run_mango_pipeline.sh $BAM_DIR/ENCSR981FNA.paired.bedpe $BAM_DIR
+
+# Move data to their final location
+cd $BAM_DIR
+mv ENCSR981FNA.paired.mango.log ENCSR981FNA.paired.models.pdf ENCSR981FNA.paired.interactions.fdr.mango ENCSR981FNA.paired.depth_combo_model.2.text ENCSR981FNA.paired.distance_combo_model.2.text ENCSR981FNA.paired.depth_IAB_model.2.text ENCSR981FNA.paired.distance_IAB_model.2.text ENCSR981FNA.paired.depth_combo_model.1.text ENCSR981FNA.paired.distance_combo_model.1.text ENCSR981FNA.paired.depth_IAB_model.1.text ENCSR981FNA.paired.distance_IAB_model.1.text ENCSR981FNA.paired.distance.txt ENCSR981FNA.paired.distance.pdf ENCSR981FNA.paired.PET.distances.pdf ENCSR981FNA.paired.bedpe.gz $MANGO_DIR
+cd $WD
+
+
+# Filter and trim loop anchors to overlapping CTCF ChIP-seq peaks.
+cat <(printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n") $MANGO_DIR/GM12878.ENCSR981FNA.paired.interactions.fdr.mango > GM12878.ENCSR981FNA.paired.interactions.fdr.bedpe
+../trim_ChIA-PET.py -b GM12878.ENCSR981FNA.paired.interactions.fdr.bedpe  -c ../../ChIP-seq/CTCF/CTCF.GM12878.mergesort.narrowPeak.bgz >> GM12878.RAD21_ChIA-PET.with_CTCF.trimmed.bedpe

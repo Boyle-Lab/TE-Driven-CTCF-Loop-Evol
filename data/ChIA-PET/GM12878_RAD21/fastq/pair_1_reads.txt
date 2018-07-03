@@ -1,0 +1,9 @@
+ENCFF368JKS.fastq.gz
+ENCFF448GTW.fastq.gz
+ENCFF486HBO.fastq.gz
+ENCFF638BRG.fastq.gz
+ENCFF710MUT.fastq.gz
+ENCFF901MMB.fastq.gz
+ENCFF907PMC.fastq.gz
+ENCFF923SMY.fastq.gz
+ENCFF980MHB.fastq.gz
