@@ -2,3 +2,17 @@
 # from human GM12878 and K562 cells, for RAD21 ChIA-pet loops, and from mouse CH12 cells, for
 # Hi-C loops.
 
+# First step intersects loop data with previously-produced TE/CTCF ChIP-seq data on the hadoop cluster.
+# This process is described in intersect-loop-te.q
+
+
+# Create data tables from data files on hdfs. Copy these to the local directory.
+hdfs dfs -cat ctcf_te_mt_intersection/* > ctcf_loop_te_motif_intersection.hg19.txt
+hdfs dfs -cat ctcf_mt_intersection/* > ctcf_loop_motif_intersection.hg19.txt
+hdfs dfs -cat ctcf_te_intersection/* > ctcf_loop_te_intersection.hg19.txt
+hdfs dfs -cat ctcf_te_mt_intersection/* > ctcf_hic_te_motif_intersection.hg19.txt
+hdfs dfs -cat ctcf_mt_intersection/* > ctcf_hic_motif_intersection.hg19.txt
+hdfs dfs -cat ctcf_te_intersection/* > ctcf_hic_te_intersection.hg19.txt
+
+# Complete the analysis in R for production of Figure 2 and supplemental table 6.
+# These procedures are in te-loop-intersection.R
