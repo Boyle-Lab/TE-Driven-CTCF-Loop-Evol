@@ -70,30 +70,36 @@ CREATE EXTERNAL TABLE motifs_st(id INT, chrom STRING, chromStart INT, chromEnd I
 
 LOAD DATA INPATH '/user/adadiehl/chia_pet.dat' OVERWRITE INTO TABLE chia_pet_st;
 
-INSERT INTO chia_pet PARTITION (factor='CTCF', species='hg19', cell='GM12878') SELECT id, chrom1, start1, end1, chrom2, start2, end2, iab, fdr FROM chia_pet_st WHERE factor='CTCF' AND species='hg19' AND cell='GM12878';
+INSERT INTO chia_pet PARTITION (factor='RAD21', species='hg19', cell='GM12878') SELECT id, chrom1, start1, end1, chrom2, start2, end2, iab, fdr FROM chia_pet_st WHERE factor='RAD21' AND species='hg19' AND cell='GM12878';
+INSERT INTO chia_pet PARTITION (factor='RAD21', species='hg19', cell='K562') SELECT id, chrom1, start1, end1, chrom2, start2, end2, iab, fdr FROM chia_pet_st WHERE factor='RAD21' AND species='hg19' AND cell='K562';
+INSERT INTO chia_pet PARTITION (factor='Hi-C', species='hg19', cell='GM12878') SELECT id, chrom1, start1, end1, chrom2, start2, end2, iab, fdr FROM chia_pet_st WHERE factor='Hi-C' AND species='hg19' AND cell='GM12878';
+INSERT INTO chia_pet PARTITION (factor='Hi-C', species='hg19', cell='K562') SELECT id, chrom1, start1, end1, chrom2, start2, end2, iab, fdr FROM chia_pet_st WHERE factor='Hi-C' AND species='hg19' AND cell='K562';
+INSERT INTO chia_pet PARTITION (factor='Hi-C', species='mm9', cell='CH12') SELECT id, chrom1, start1, end1, chrom2, start2, end2, iab, fdr FROM chia_pet_st WHERE factor='Hi-C' AND species='mm9' AND cell='CH12';
+
 
 LOAD DATA INPATH '/user/adadiehl/chip_seq.dat' OVERWRITE INTO TABLE chip_seq_st;
-
 INSERT INTO chip_seq PARTITION (factor='CTCF', species='hg19', cell='GM12878') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='CTCF' AND species='hg19' AND cell='GM12878';
-
 INSERT INTO chip_seq PARTITION (factor='RAD21', species='hg19', cell='GM12878') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='RAD21' AND species='hg19' AND cell='GM12878';
-
 INSERT INTO chip_seq PARTITION (factor='SMC3', species='hg19', cell='GM12878') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='SMC3' AND species='hg19' AND cell='GM12878';
 
 INSERT INTO chip_seq PARTITION (factor='CTCF', species='hg19', cell='K562') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='CTCF' AND species='hg19' AND cell='K562';
+INSERT INTO chip_seq PARTITION (factor='RAD21', species='hg19', cell='K562') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='RAD21' AND species='hg19' AND cell='K562';
+INSERT INTO chip_seq PARTITION (factor='SMC3', species='hg19', cell='K562') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='SMC3' AND species='hg19' AND cell='K562';
 
 INSERT INTO chip_seq PARTITION (factor='CTCF', species='mm9', cell='CH12') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='CTCF' AND species='mm9' AND cell='CH12';
+INSERT INTO chip_seq PARTITION (factor='RAD21', species='mm9', cell='CH12') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='RAD21' AND species='mm9' AND cell='CH12';
+INSERT INTO chip_seq PARTITION (factor='SMC3', species='mm9', cell='CH12') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='SMC3' AND species='mm9' AND cell='CH12';
 
 INSERT INTO chip_seq PARTITION (factor='CTCF', species='mm9', cell='MEL') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='CTCF' AND species='mm9' AND cell='MEL';
+INSERT INTO chip_seq PARTITION (factor='RAD21', species='mm9', cell='MEL') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='RAD21' AND species='mm9' AND cell='MEL';
+INSERT INTO chip_seq PARTITION (factor='SMC3', species='mm9', cell='MEL') SELECT id, chrom, chromStart, chromEnd, name, score, strand, signalValue, pValue, fdr, peak FROM chip_seq_st WHERE factor='SMC3' AND species='mm9' AND cell='MEL';
+
 
 LOAD DATA INPATH '/user/adadiehl/repeatmasker.dat' OVERWRITE INTO TABLE repeatmasker_st;
-
 INSERT INTO repeatmasker PARTITION (species='hg19') SELECT id, chrom, chromStart, chromEnd, name, class, family, pctDiv FROM repeatmasker_st WHERE species='hg19';
-
 INSERT INTO repeatmasker PARTITION (species='mm9') SELECT id, chrom, chromStart, chromEnd, name, class, family, pctDiv FROM repeatmasker_st WHERE species='mm9';
 
+
 LOAD DATA INPATH '/user/adadiehl/motifs.dat' OVERWRITE INTO TABLE motifs_st;
-
 INSERT INTO motifs PARTITION (species='hg19', factor='CTCF') SELECT id, chrom, chromStart, chromEnd, strand, score FROM motifs_st WHERE species='hg19' AND factor='CTCF';
-
 INSERT INTO motifs PARTITION (species='mm9', factor='CTCF') SELECT id, chrom, chromStart, chromEnd, strand, score FROM motifs_st WHERE species='mm9' AND factor='CTCF';

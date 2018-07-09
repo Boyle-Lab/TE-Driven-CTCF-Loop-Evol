@@ -12,11 +12,11 @@ zcat ../repeatMasker/mm9.rmsk.bed.gz | grep -v "random" | grep -v "hap" | grep -
 # CTCF
 cat ../ChIP-seq/CTCF/CTCF.GM12878.mergesort.narrowPeak | awk 'BEGIN {i=1}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' > chip_seq.dat
 
-cat ../ChIP-seq/CTCF/CTCF.K562.mergesort.narrowPeak | awk 'BEGIN {i=1}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
+cat ../ChIP-seq/CTCF/CTCF.K562.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat ../ChIP-seq/CTCF/CTCF.CH12.mergesort.narrowPeak | awk 'BEGIN {i=1}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
+cat ../ChIP-seq/CTCF/CTCF.CH12.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
-cat ../ChIP-seq/CTCF/CTCF.MEL.mergesort.narrowPeak | awk 'BEGIN {i=1}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
+cat ../ChIP-seq/CTCF/CTCF.MEL.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tCTCF\tmm9\tMEL\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
 
 # RAD21
 cat ../ChIP-seq/RAD21/RAD21.GM12878.mergesort.narrowPeak | awk -v i=$(tail -n 1 chip_seq.dat | awk '{print $1}') 'BEGIN {i++}; {printf "%d\t%s\t%d\t%d\t%s\t%d\t%s\t%f\t%d\t%f\t%d\tRAD21\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8, $9, ($2 + $10); i++}' >> chip_seq.dat
@@ -46,8 +46,15 @@ cat ../motifs/mm9.CTCF.ren.motif_predictions.bed | grep -v "random" | grep -v "h
 
 
 ####
-# ChIA-PET loops
-cat ../ChIA-PET/CTCF/CTCF_ChIA-PET.with_CTCF.trimmed.bedpe | awk 'BEGIN {i=1}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tCTCF\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  > chia_pet.dat
+# RAD21 ChIA-PET loops
+cat ../ChIA-PET/GM12878_RAD21/GM12878.RAD21_ChIA-PET.with_CTCF.trimmed.bedpe | awk 'BEGIN {i=1}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tRAD21\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  > chia_pet.dat
+cat ../ChIA-PET/K562_RAD21/K562.RAD21_ChIA-PET.with_CTCF.trimmed.bedpe | awk -v i=$(tail -n 1 chia_pet.dat | awk '{print $1}') 'BEGIN {i++}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tRAD21\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  >> chia_pet.dat
+
+####
+# Hi-C loops (These go into the ChIA-pet table)
+cat ../Hi-C/hic_loops.GM12878.CTCF-trimmed.bedpe | awk -v i=$(tail -n 1 chia_pet.dat | awk '{print $1}') 'BEGIN {i++}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tHi-C\thg19\tGM12878\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  >> chia_pet.dat
+cat ../Hi-C/hic_loops.K562.CTCF-trimmed.bedpe | awk -v i=$(tail -n 1 chia_pet.dat | awk '{print $1}') 'BEGIN {i++}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tHi-C\thg19\tK562\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  >> chia_pet.dat
+cat ../Hi-C/hic_loops.CH12.CTCF-trimmed.bedpe | awk -v i=$(tail -n 1 chia_pet.dat | awk '{print $1}') 'BEGIN {i++}; {if (NR > 1) {printf "%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\tHi-C\tmm9\tCH12\n", i, $1, $2, $3, $4, $5, $6, $7, $8; i++}}'  >> chia_pet.dat
 
 
 ################
