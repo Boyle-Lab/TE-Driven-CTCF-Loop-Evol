@@ -1,0 +1,12 @@
+# Procedures for processing Hi-C loop data for GM12878, K562, and CH12 cells.
+# Source files came from Rao and Huntley, 2014: GEO GSE63525
+# Filter and trim these to CTCF ChIP-seq peaks from the applicable cell types.
+
+printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n" > hic_loops.CH12.CTCF-trimmed.bedpe
+../ChIA-PET/trim_ChIA-PET.py -b <(printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n" ; awk '{printf "%s\t%d\t%d\t%s\t%d\t%d\t%d\t%f\n", $1, $2, $3, $4, $5, $6, $8, $14}' GSE63525_CH12-LX_HiCCUPS_looplist_with_motifs.txt) -c ../ChIP-seq/CTCF/CTCF.CH12.mergesort.narrowPeak.bgz >> hic_loops.CH12.CTCF-trimmed.bedpe
+
+printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n" > hic_loops.K562.CTCF-trimmed.bedpe
+../ChIA-PET/trim_ChIA-PET.py -b <(printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n" ; awk '{if (NR > 1) {printf "chr%s\t%d\t%d\tchr%s\t%d\t%d\t%d\t%f\n", $1, $2, $3, $4, $5, $6, $8, $14}}' GSE63525_K562_HiCCUPS_looplist_with_motifs.txt) -c ../ChIP-seq/CTCF/CTCF.K562.mergesort.narrowPeak.bgz >> hic_loops.K562.CTCF-trimmed.bedpe
+
+printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n" > hic_loops.GM12878.CTCF-trimmed.bedpe
+../ChIA-PET/trim_ChIA-PET.py -b <(printf "chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tIAB\tFDR\n" ; awk '{if (NR > 1) {printf "chr%s\t%d\t%d\tchr%s\t%d\t%d\t%d\t%f\n", $1, $2, $3, $4, $5, $6, $8, $14}}' GSE63525_GM12878_primary+replicate_HiCCUPS_looplist_with_motifs.txt) -c ../ChIP-seq/CTCF/CTCF.GM12878.mergesort.narrowPeak.bgz >> hic_loops.GM12878.CTCF-trimmed.bedpe
