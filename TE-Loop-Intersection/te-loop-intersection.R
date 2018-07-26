@@ -48,3 +48,8 @@ colnames(hic_te_motif_data) = c("id_rp", "chrom", "chromStart_rp", "chromEnd_rp"
 dat.CH12 = add_te_intersections(loop_data[which(loop_data$cell == "CH12" & loop_data$factor == "Hi-C"),c(1:4,6:7)], loop_te_data)
 dat.CH12 = add_motif_orientations(dat.CH12, loop_motif_data)
 write.table(get_motif_data_table(dat.CH12), sep="\t", row.names=TRUE, col.names=TRUE, quote=FALSE, file="TE-derived-loop-fraction_motif-layouts.CH12.txt")
+
+# Write data tables to files for use in loop conservation analysis.
+write.table(dat.CH12, sep="\t", quote=FALSE, row.names=TRUE, col.names=TRUE, file="data.CH12.txt")
+write.table(dat.GM12878, sep="\t", quote=FALSE, row.names=TRUE, col.names=TRUE, file="data.GM12878.txt")
+write.table(dat.K562, sep="\t", quote=FALSE, row.names=TRUE, col.names=TRUE, file="data.K562.txt")
