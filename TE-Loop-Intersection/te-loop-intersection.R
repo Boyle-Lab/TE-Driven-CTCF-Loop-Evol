@@ -53,3 +53,77 @@ write.table(get_motif_data_table(dat.CH12), sep="\t", row.names=TRUE, col.names=
 write.table(dat.CH12, sep="\t", quote=FALSE, row.names=TRUE, col.names=TRUE, file="data.CH12.txt")
 write.table(dat.GM12878, sep="\t", quote=FALSE, row.names=TRUE, col.names=TRUE, file="data.GM12878.txt")
 write.table(dat.K562, sep="\t", quote=FALSE, row.names=TRUE, col.names=TRUE, file="data.K562.txt")
+
+
+## Add intersection with enriched TE types (Fig 2D, sup fig. 3)
+
+# Read in data
+enr_te_fams = read.table("enriched_te_fams.txt", sep="\t", stringsAsFactors=FALSE, header=FALSE)
+colnames(enr_te_fams) = c("species", "name")
+rownames(enr_te_fams) = enr_te_fams$name
+
+# Load commands
+source("build_extended_loop_datatable.R")
+
+# CH12
+tmp = dat.CH12
+
+# Separate out TE-derived loops
+tmp1 = tmp[which( ( ( (tmp$te_left & tmp[,"GM12878_l_maps"] == FALSE) | (tmp$te_right & tmp[,"GM12878_r_maps"] == FALSE) ) ) ) ,]
+tmp1 = rbind(tmp1, tmp[which( !(tmp$id_cp %in% tmp1$id_cp) & (tmp$te_left | tmp$te_right) ),])
+tmp$te_derived = tmp$id_cp %in% tmp1$id_cp
+tmp = add_te_fam(tmp, hic_te_data)
+tmp = add_te_spec(tmp, enr_te_fams)
+dat.CH12 = tmp
+
+# GM12878
+tmp = dat.GM12878
+tmp1 = tmp[which( ( ( (tmp$te_left & tmp[,"CH12_l_maps"] == FALSE) | (tmp$te_right & tmp[,"CH12_r_maps"] == FALSE) ) ) ) ,]
+tmp1 = rbind(tmp1, tmp[which( !(tmp$id_cp %in% tmp1$id_cp) & (tmp$te_left | tmp$te_right) ),])
+tmp$te_derived = tmp$id_cp %in% tmp1$id_cp
+tmp = add_te_fam(tmp, loop_te_data)
+tmp = add_te_spec(tmp, enr_te_fams)
+dat.GM12878 = tmp
+
+# K562
+tmp = dat.K562
+tmp1 = tmp[which( ( ( (tmp$te_left & tmp[,"CH12_l_maps"] == FALSE) | (tmp$te_right & tmp[,"CH12_r_maps"] == FALSE) ) ) ) ,]
+tmp1 = rbind(tmp1, tmp[which( !(tmp$id_cp %in% tmp1$id_cp) & (tmp$te_left | tmp$te_right) ),])
+tmp$te_derived = tmp$id_cp %in% tmp1$id_cp
+tmp = add_te_fam(tmp, loop_te_data)
+tmp = add_te_spec(tmp, enr_te_fams)
+dat.K562 = tmp
+
+# Combine the data for plotting
+tmp.CH12 = table(c(dat.CH12$te_name_l, dat.CH12$te_name_r))
+tmp.CH12 = tmp.CH12[order(tmp.CH12)]
+tmp.CH12 = tmp.CH12[which(names(tmp.CH12) %in% enr_te_fams$name)]
+tmp.GM12878 = table(c(dat.GM12878$te_name_l, dat.GM12878$te_name_r))
+tmp.GM12878 = tmp.GM12878[order(tmp.GM12878)]
+tmp.GM12878 = tmp.GM12878[which(names(tmp.GM12878) %in% enr_te_fams$name)]
+tmp.K562 = table(c(dat.K562$te_name_l, dat.K562$te_name_r))
+tmp.K562 = tmp.K562[order(tmp.K562)]
+tmp.K562 = tmp.K562[which(names(tmp.K562) %in% enr_te_fams$name)]
+
+dat = enr_te_fams
+dat$K562 = dat$GM12878 = dat$CH12 = NA
+colnames(dat)[3:5] = c("CH12","GM12878","K562")
+rownames(dat) = unique(c(names(tmp.CH12), names(tmp.GM12878), names(tmp.K562)))
+dat[names(tmp.CH12),"CH12"] = tmp.CH12
+dat[names(tmp.GM12878),"GM12878"] = tmp.GM12878
+dat[names(tmp.K562),"K562"] = tmp.K562
+library(reshape)
+tmp = melt(dat)
+tmp$name = factor(tmp$name, levels=dat$name)
+
+# Supplemental figure 3: Full TE overlap data for enriched families
+pdf("loop_te-enriched-fam-intersections.pdf")
+ggplot(tmp, aes(x=variable, y=value, fill=name)) +
+geom_bar(stat="identity", position="fill")
+dev.off()
+
+# Figure 2D: TE Enrichment Types by Cell
+pdf("loop_te-enriched-species-intersections.pdf")
+ggplot(tmp, aes(x=variable, y=value, fill=species)) +
+geom_bar(stat="identity", position="fill")
+dev.off()
