@@ -510,42 +510,45 @@ summary(lm(class ~ estAge, data=tmp1))
 
 ## Figure 3E shows the contributions of enriched TE families to each conservation class in mouse-human, and 3F in  human-mouse comparisons.
 # Mouse to Human data (3E)
-tmp = dat.CH12[which(dat.CH12$te_name_l %in% enr_te_fams$name | dat.CH12$te_name_r %in% enr_te_fams$name & dat.CH12$te_derived == TRUE),]
-test = compile_class_enrichment_summary_data(tmp, "GM12878", "K562")
-# Combine shared and human-enriched categories for clarity
+tmp = dat.CH12[which(dat.CH12$te_derived == TRUE),]
+test = compile_class_enrichment_summary_data(tmp, "GM12878", "K562", useNA=TRUE)
 test[is.na(test)] = 0
 test$Human_Shared = test[,2]+test[,4]
-test = test[,c(1,3,5)]
+test = test[,c(1,3,5,6)]
+dat = melt(test)
+dat$variable = factor(dat$variable, levels=c("Mouse", "Human_Shared", "No_Enr"))
 
-pdf("TE-enrichment-class-by-conservation-class.mouse-to-human.pdf")
-ggplot(melt(test), aes(x=class, y=value, fill=variable)) +
+pdf("TE-enrichment-class-by-conservation-class.mouse-to-human.3.pdf")
+ggplot(dat, aes(x=class, y=value, fill=variable)) +
 geom_bar(stat="identity", position="fill")
 dev.off()
-
-# Dot plot to indicate set sizes -- this will be hand-overlayed onto the bar plot.
-pdf("TE-enrichment-class-by-conservation-class.dotplot.mouse-to-human.pdf")
-ggplot(melt(test), aes(x=class, y=value)) +
+ 
+pdf("TE-enrichment-class-by-conservation-class.dotplot.mouse-to-human.3.pdf")
+ggplot(dat, aes(x=class, y=value)) +
 geom_point()
 dev.off()
+
 
 # Human to Human (3F)
-tmp = dat.GM12878[which(dat.GM12878$te_name_l %in% enr_te_fams$name | dat.GM12878$te_name_r %in% enr_te_fams$name & dat.GM12878$te_derived == TRUE),]
-test = compile_class_enrichment_summary_data(tmp, "K562")
-tmp = dat.K562[which(dat.K562$te_name_l %in% enr_te_fams$name | dat.K562$te_name_r %in% enr_te_fams$name & dat.K562$te_derived == TRUE),]
-test1 = compile_class_enrichment_summary_data(tmp, "GM12878")
-test[,2:4] = test[,2:4] + test1[,2:4]
+tmp = dat.GM12878[which(dat.GM12878$te_derived == TRUE),]
+test = compile_class_enrichment_summary_data(tmp, "K562", useNA=TRUE)
+tmp = dat.K562[which(dat.K562$te_derived == TRUE),]
+test1 = compile_class_enrichment_summary_data(tmp, "GM12878", useNA=TRUE)
+test[,2:5] = test[,2:5] + test1[,2:5]
+test = test[,c(1,2,4,5)]
+dat = melt(test)
+dat$variable = factor(dat$variable, levels=c("Human", "Shared", "No_Enr"))
 
-pdf("TE-enrichment-class-by-conservation-class.human-to-human.pdf")
-ggplot(melt(test), aes(x=class, y=value, fill=variable)) +
+pdf("TE-enrichment-class-by-conservation-class.human-to-human.2.pdf")
+ggplot(dat, aes(x=class, y=value, fill=variable)) +
 geom_bar(stat="identity", position="fill")
 dev.off()
 
 # Dot plot to indicate set sizes -- this will be hand-overlayed onto the bar plot.
-pdf("TE-enrichment-class-by-conservation-class.dotplot.human-to-human.pdf")
-ggplot(melt(test), aes(x=class, y=value)) +
+pdf("TE-enrichment-class-by-conservation-class.dotplot.human-to-human.2.pdf")
+ggplot(dat, aes(x=class, y=value)) +
 geom_point()
 dev.off()
-
 
 ## Figure 3H shows the spatial distribution of phastCons conservation scores across 500 bp
 ## windows surrounding the annotated CTCF ChIP-seq peak in TE-derived loop anchors, broken
