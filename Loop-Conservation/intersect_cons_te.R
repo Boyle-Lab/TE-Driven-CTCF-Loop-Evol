@@ -137,7 +137,7 @@ add_te_ages = function(dat.loops, dat.te, rate) {
     return(dat)
 }
 
-compile_class_enrichment_summary_data = function(dat.loops, cell_1, cell_2=NULL, cats = c("C", "B2", "B1", "B0", "N1A", "N1B", "N0")) {
+compile_class_enrichment_summary_data = function(dat.loops, cell_1, cell_2=NULL, cats = c("C", "B2", "B1", "B0", "N1A", "N1B", "N0"), useNA=FALSE) {
     # Compile a data table summarizing the contribution of different
     # TE enrichment categories to the composition within each conservation class.
     class_col_1 = paste("class", cell_1, sep="_")
@@ -147,6 +147,9 @@ compile_class_enrichment_summary_data = function(dat.loops, cell_1, cell_2=NULL,
     
     ret = as.data.frame(matrix(nrow=length(cats), ncol=4))
     colnames(ret) = c("class", "Human", "Mouse", "Shared")
+    if (useNA) {
+        ret$No_Enr = NA
+    }
     for (i in 1:length(cats)) {
         cat = cats[i]
         ret[i,"class"] = cat
@@ -155,12 +158,126 @@ compile_class_enrichment_summary_data = function(dat.loops, cell_1, cell_2=NULL,
 	if (!is.null(cell_2)) {	
 	    tmp = rbind(tmp, dat.loops[which(dat.loops[,class_col_1] == cat),])
 	}
-        x = table(c(tmp[,"te_spec_l"], tmp[,"te_spec_r"]))
+	if (useNA) {
+	    x = table(c(tmp[,"te_spec_l"], tmp[,"te_spec_r"]), useNA="always")
+	} else {
+            x = table(c(tmp[,"te_spec_l"], tmp[,"te_spec_r"]))
+	}
 	for (spec in c("Human", "Mouse", "Shared")) {
 	    ret[i,spec] = x[spec]
+	}
+	if (useNA) {
+	    # Add NA value counts to Shared category
+	    #ret[i,"Shared"] = ret[i,"Shared"] + x[which(is.na(names(x)))]
+	    ret[i,"No_Enr"] = x[which(is.na(names(x)))]
 	}
     }
     ret$class = factor(ret$class, levels=cats)
     return(ret)
 }
 
+compile_class_bigwig_scores = function(dat.loops, dat.te, bigwig, cell_1, cell_2=NULL,  size=1000, cats = c("C", "B2", "B1", "B0", "N1A", "N1B", "N0")) {
+    # Compile bigwig scores from the given bigwig file for TE-derived anchors in the dat.loops.
+    # Return a data frame where each row is a vector of column means for windows of the given
+    # size around the CTCF peak location for the TE-derived loop anchor (in dat.te)
+    require(rtracklayer)    
+
+    ret = as.data.frame(matrix(nrow=length(cats), ncol=size+1))
+    colnames(ret) = c("cat", 1:size)
+
+    class_col_1 = paste("class", cell_1, sep="_")
+    if (!is.null(cell_2)) {
+	class_col_2 = paste("class", cell_2, sep="_")
+    }
+        
+    for (i in 1:length(cats)) {
+    	cat = cats[i]
+        x = dat.loops[which(dat.loops$te_derived & dat.loops[,class_col_1] == cat),]
+	if (!is.null(cell_2)) {
+	    x = rbind(x, dat.loops[which(dat.loops$te_derived & dat.loops[,class_col_2] == cat),])
+	}
+	for (j in 1:nrow(x)) {
+	    peak = list(dat.te[which(dat.te$id_cp == x[j,"id_cp"]),])
+	    for (p in peak) {
+	        #pp = round(mean(c(p$chromstart_rp, p$chromend_rp)))
+		pp = p$peak
+	        if (!exists("ints")) {
+	            ints = as.data.frame(matrix(nrow=1, ncol=3))
+        	    colnames(ints) = c("chrom", "start", "end")
+	    	    ints["chrom"] = dat.te[which(dat.te$id_cp == x[j,"id_cp"]), "chrom"]
+	    	    ints["start"] = pp
+		    ints["end"] = pp
+	    	} else {
+		    ints = rbind(ints, data.frame(chrom = dat.te[which(dat.te$id_cp == x[j,"id_cp"]), "chrom"], start = pp, end = pp))
+	    	}
+	    }
+	}
+
+	flen = round(size / 2)
+	# Get data from the bigWig file
+	dat = import.bw(con = BigWigFile(bigwig),
+                        selection = flank(makeGRangesFromDataFrame(ints, ignore.strand=TRUE),
+                                          flen, both=TRUE),
+		        as = "NumericList")
+	# Convert bigWig data to standard dataframe form
+	dat = lapply(dat, drop)
+	dat = rbind.data.frame(lapply(dat, unlist))
+	dat = apply(dat, 1, unlist)
+	rownames(dat) = unlist(lapply(rownames(dat), function(x){unlist(strsplit(x, "[.]"))[2]}))
+
+	# Calculate col means and store the output vector in ret
+	ret[i,2:ncol(ret)] = colMeans(dat)
+	ret[i,"cat"] = cat
+    }
+    return(ret)
+}
+
+convert_to_long = function(dat, cats = c("C", "B2", "B1", "B0", "N1A", "N1B", "N0")) {
+    # Convert wide-format matrix of bigwig values to long-format.
+    for (i in 1:length(cats)) {
+        cat = cats[i]
+	x = dat[which(dat$cat == cat),2:ncol(dat)]
+	tmp = data.frame(cat = cat, position = 1:ncol(x), value = unlist(x[1,]))
+	if (!exists("ret")) {
+	    ret = tmp
+	} else {
+	    ret = rbind(ret, tmp)
+	}
+    }
+    return(ret)
+}
+
+wilcox_age_matrix = function(dat, cell_1, cell_2=NULL, alt="t", cats = c("C", "B2", "B1", "B0", "N1A", "N1B", "N0")) {
+    # Build a matrix of Wilcoxon p-values comparing estimated TE ages between all
+    # pairs of conservation classes present in a dataset.
+
+    class_col_1 = paste("class", cell_1, sep="_")
+    if (!is.null(cell_2)) {
+        class_col_2 = paste("class", cell_2, sep="_")
+    }
+
+    cats = factor(cats, levels=c("C", "B2", "B1", "B0", "N1A", "N1B", "N0"))
+    cats = cats[order(cats)]
+    ret = matrix(ncol=length(cats), nrow=length(cats))
+    # Only fill in the upper triangle of the matrix
+    for (i in 1:(length(cats)-1)) {
+        for (j in (i+1):length(cats)) {	
+            class_1 = cats[i]
+            class_2 = cats[j]
+	    scores_1 = dat[which(dat[,class_col_1] == class_1), "estAge"]
+            scores_2 = dat[which(dat[,class_col_1] == class_2), "estAge"]
+	    if (!is.null(cell_2)) {
+    	        scores_1 = dat[which(dat[,class_col_1] == class_1 | dat[,class_col_2] == class_1), "estAge"]
+            	scores_2 = dat[which(dat[,class_col_1] == class_2 | dat[,class_col_2] == class_2), "estAge"]
+	    } else {
+	        scores_1 = dat[which(dat[,class_col_1] == class_1), "estAge"]
+            	scores_2 = dat[which(dat[,class_col_1] == class_2), "estAge"]
+	    }
+            # By default, uses alternative "two.sided" -- just testing for inequality
+            f = wilcox.test(scores_1, scores_2, alternative=alt)
+            ret[i,j] = f$p.value
+        }
+    }    
+    colnames(ret) = rownames(ret) = cats
+    return(ret)
+}

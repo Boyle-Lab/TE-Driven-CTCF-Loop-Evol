@@ -419,7 +419,7 @@ geom_density(alpha=0.3)
 dev.off()
 
 
-## Figure 3E compares TE age distributions across conservation classes for mouse-human and human-mouse comparisons.
+## Figure 3G compares TE age distributions across conservation classes for mouse-human and human-mouse comparisons.
 
 # Mouse-human comparison is straightforward...
 tmp = dat.CH12
@@ -442,7 +442,32 @@ ggplot(tmp1, aes(x=class, y=estAge/1000000)) +
 geom_boxplot(notch=T)
 dev.off()
 
-# Human-human is more work...
+# Generate the heat map of p-values for all pairwise Wilcoxon rank-sum tests.
+dat = wilcox_age_matrix(dat.CH12, "GM12878", "K562", alt="g")
+dat.m = melt(dat)
+dat.m$X1 = factor(dat.m$X1, levels=c("C", "B2", "B1", "B0", "N1A", "N1B", "N0"))
+dat.m$X2 = factor(dat.m$X2, levels=c("C", "B2", "B1", "B0", "N1A", "N1B", "N0"))
+
+pdf("class-age-comparisons_p-vals-heat.mouse-to-human.pdf")
+ggplot(dat.m, aes(x=X2, y=X1)) +
+geom_tile(aes(fill=value), colour="black") +
+coord_fixed(ratio=1) +
+scale_fill_gradient(high="white", low="#6F2E91", limits=c(0,1))
+dev.off()
+
+# Test for linear correlation between conservation classes and TE age in the mouse-human comparison
+tmp1$class = as.numeric(tmp1$class)
+
+# Scatter plot with lm line overlayed.
+ggplot(tmp1, aes(x=class, y=estAge)) +
+geom_point() +
+geom_smooth(method="lm")
+
+# Correlation stats...
+summary(lm(class ~ estAge, data=tmp1))
+
+
+# Human-human comparison...
 tmp = dat.GM12878
 
 # Separate out TE-derived loops
@@ -473,9 +498,18 @@ ggplot(tmp1, aes(x=class, y=estAge/1000000)) +
 geom_boxplot(notch=T)
 dev.off()
 
+# No Wilcoxon p-value matrix here. Do the test for linear correlation, though, for comparison.
+tmp1$class = as.numeric(tmp1$class)
 
-## Figure 3F shows the contributions of enriched TE families to each conservation class in mouse-human and human-mouse comparisons.
-# Mouse to Human data
+ggplot(tmp1, aes(x=class, y=estAge)) +
+geom_point() +
+geom_smooth(method="lm")
+
+summary(lm(class ~ estAge, data=tmp1))
+
+
+## Figure 3E shows the contributions of enriched TE families to each conservation class in mouse-human, and 3F in  human-mouse comparisons.
+# Mouse to Human data (3E)
 tmp = dat.CH12[which(dat.CH12$te_name_l %in% enr_te_fams$name | dat.CH12$te_name_r %in% enr_te_fams$name & dat.CH12$te_derived == TRUE),]
 test = compile_class_enrichment_summary_data(tmp, "GM12878", "K562")
 # Combine shared and human-enriched categories for clarity
@@ -494,7 +528,7 @@ ggplot(melt(test), aes(x=class, y=value)) +
 geom_point()
 dev.off()
 
-# Human to Human
+# Human to Human (3F)
 tmp = dat.GM12878[which(dat.GM12878$te_name_l %in% enr_te_fams$name | dat.GM12878$te_name_r %in% enr_te_fams$name & dat.GM12878$te_derived == TRUE),]
 test = compile_class_enrichment_summary_data(tmp, "K562")
 tmp = dat.K562[which(dat.K562$te_name_l %in% enr_te_fams$name | dat.K562$te_name_r %in% enr_te_fams$name & dat.K562$te_derived == TRUE),]
@@ -512,3 +546,29 @@ ggplot(melt(test), aes(x=class, y=value)) +
 geom_point()
 dev.off()
 
+
+## Figure 3H shows the spatial distribution of phastCons conservation scores across 500 bp
+## windows surrounding the annotated CTCF ChIP-seq peak in TE-derived loop anchors, broken
+## down by conservation class.
+
+# Human-mouse data are used in Figure 3H:
+test2 = compile_class_bigwig_scores(dat.GM12878, loop_te_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "CH12", size=1000)
+# Convert data to long format matrix. For some reason, the "melt" function doesn't play well here...
+dat2 = convert_to_long(test2)
+# Plot the data as lines...
+pdf("loop-conservation_vs_phastcons.GM12878-to-CH12.pdf")
+ggplot(dat2, aes(x=position, y=value, colour=cat))+
+geom_line()
+dev.off()
+
+# Mouse-human shows the same trends, but much noisier due to the small set sizes.
+test = compile_class_bigwig_scores(dat.CH12, hic_te_data, "/data/UCSC/PHASTCONS/mm9/phastCons30way.placental.bigWig", "GM12878", "K562", size=1000)
+dat = convert_to_long(test)
+ggplot(dat, aes(x=position, y=value, colour=cat))+
+geom_line()
+
+# Human-human data have similar distributions for all classes, with only slight conservation drop at the peaks.
+test3 = compile_class_bigwig_scores(dat.GM12878, loop_te_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "K562", size=1000, cats=c("C","B2","B1","B0"))
+dat3 = convert_to_long(test3, cats=c("C","B2","B1","B0"))
+ggplot(dat3, aes(x=position, y=value, colour=cat))+
+geom_line()
