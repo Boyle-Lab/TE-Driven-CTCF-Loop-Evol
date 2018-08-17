@@ -1,0 +1,22 @@
+# This file contains commands to generate phastCons 30-way and 46-way placental mammal conservation scores for mouse and human, respectively.
+# This requires the wigToBigWig utility, available from http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/
+
+mkdir -pv {mm9,hg19}
+WD=$(pwd)
+
+## hg19
+# Retrieve fixed-step wig files from UCSC and concatenate
+cd $WD/hg19
+rsync -avz --progress rsync://hgdownload.cse.ucsc.edu/goldenPath/hg19/phastCons46way/placentalMammals/ ./
+zcat chr{{1..22},X,Y}.*.gz | gzip -c >> phastCons46way.placental.wigFix.gz
+# Convert to bigWig format
+wigToBigWig phastCons46way.placental.wigFix.gz /../../chrom.sizes/hg19.chrom.sizes phastCons46way.placental.bigWig
+# Delete source files to save space
+rm *.wigFix.gz
+
+## mm9
+cd $WD/mm9
+rsync -avz --progress http://hgdownload.cse.ucsc.edu/goldenPath/mm9/phastCons30way/placental/ ./
+zcat chr{{1..19},X,Y}.*.gz | gzip -c >> phastCons30way.placental.wigFix.gz
+wigToBigWig phastCons30way.placental.wigFix.gz ../../chrom.sizes/mm9.chrom.sizes phastCons30way.placental.bigWig
+rm *.wigFix.gz
