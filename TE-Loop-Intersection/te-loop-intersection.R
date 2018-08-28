@@ -105,16 +105,20 @@ tmp.K562 = table(c(dat.K562$te_name_l, dat.K562$te_name_r))
 tmp.K562 = tmp.K562[order(tmp.K562)]
 tmp.K562 = tmp.K562[which(names(tmp.K562) %in% enr_te_fams$name)]
 
-dat = enr_te_fams
-dat$K562 = dat$GM12878 = dat$CH12 = NA
-colnames(dat)[3:5] = c("CH12","GM12878","K562")
-rownames(dat) = unique(c(names(tmp.CH12), names(tmp.GM12878), names(tmp.K562)))
+te_names = union(union(names(tmp.K562), names(tmp.GM12878)), names(tmp.CH12))
+dat = data.frame(name = te_names, species = rep("Non-Enriched", length(te_names)), CH12 = rep(NA, length(te_names)), GM12878 = rep(NA, length(te_names)), K562 = rep(NA, length(te_names)), stringsAsFactors=FALSE)
+rownames(dat) = dat$name
+dat[rownames(enr_te_fams),"species"] = enr_te_fams$species
 dat[names(tmp.CH12),"CH12"] = tmp.CH12
 dat[names(tmp.GM12878),"GM12878"] = tmp.GM12878
 dat[names(tmp.K562),"K562"] = tmp.K562
 library(reshape)
 tmp = melt(dat)
 tmp$name = factor(tmp$name, levels=dat$name)
+tmp$species = factor(tmp$species, levels=c("Mouse", "Human", "Shared", "Non-Enriched"))
+
+
+
 
 # Supplemental figure 3: Full TE overlap data for enriched families
 pdf("loop_te-enriched-fam-intersections.pdf")
