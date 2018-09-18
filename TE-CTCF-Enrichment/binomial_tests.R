@@ -131,4 +131,17 @@ dat = dat[order(dat[,1], dat[,2], dat[,3], dat[,4]),]
 binomial_top5 = rbind(binomial_top5, dat[1:5,])
 write.table(binomial_top5, quote=FALSE, row.names=TRUE, col.names=TRUE, sep="\t", file="Table1_top-5-ctcf-te-enrichments-per-species.txt")
 
+####
+# CTCF-Site Fractions in Figure 2D. (These are integrated into the paper figure by hand after plotting)
+library(reshape)
+library(ggplot2)
+all_ctcf_repeats$te_spec = enr_te_fams[all_ctcf_repeats$name_rmsk,"species"]
+all_ctcf_repeats[which(is.na(all_ctcf_repeats$te_spec)),"te_spec"] = "Non-Enriched"
+dat = melt(table(all_ctcf_repeats[,c("species","te_spec")]))
+dat$te_spec = factor(dat$te_spec, levels=c("Human", "Mouse", "Shared", "Non-Enriched"))
+ 
+pdf("frac_ctcf_enr.pdf")
+ggplot(dat, aes(x=species, y=value, fill=te_spec)) +
+geom_bar(stat="identity", position="fill")
+dev.off()
 

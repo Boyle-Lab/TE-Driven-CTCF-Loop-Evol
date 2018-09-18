@@ -97,13 +97,13 @@ dat.K562 = tmp
 # Combine the data for plotting
 tmp.CH12 = table(c(dat.CH12$te_name_l, dat.CH12$te_name_r))
 tmp.CH12 = tmp.CH12[order(tmp.CH12)]
-tmp.CH12 = tmp.CH12[which(names(tmp.CH12) %in% enr_te_fams$name)]
+#tmp.CH12 = tmp.CH12[which(names(tmp.CH12) %in% enr_te_fams$name)]
 tmp.GM12878 = table(c(dat.GM12878$te_name_l, dat.GM12878$te_name_r))
 tmp.GM12878 = tmp.GM12878[order(tmp.GM12878)]
-tmp.GM12878 = tmp.GM12878[which(names(tmp.GM12878) %in% enr_te_fams$name)]
+#tmp.GM12878 = tmp.GM12878[which(names(tmp.GM12878) %in% enr_te_fams$name)]
 tmp.K562 = table(c(dat.K562$te_name_l, dat.K562$te_name_r))
 tmp.K562 = tmp.K562[order(tmp.K562)]
-tmp.K562 = tmp.K562[which(names(tmp.K562) %in% enr_te_fams$name)]
+#tmp.K562 = tmp.K562[which(names(tmp.K562) %in% enr_te_fams$name)]
 
 te_names = union(union(names(tmp.K562), names(tmp.GM12878)), names(tmp.CH12))
 dat = data.frame(name = te_names, species = rep("Non-Enriched", length(te_names)), CH12 = rep(NA, length(te_names)), GM12878 = rep(NA, length(te_names)), K562 = rep(NA, length(te_names)), stringsAsFactors=FALSE)
@@ -126,8 +126,16 @@ ggplot(tmp, aes(x=variable, y=value, fill=name)) +
 geom_bar(stat="identity", position="fill")
 dev.off()
 
-# Figure 2D: TE Enrichment Types by Cell
+# Figure 2D: Loop-Associated TE Enrichment Types by Species
+dat$Human = dat$GM12878	+ dat$K562
+dat = dat[,c(1:3,6)]
+colnames(dat)[3] = "Mouse"
+tmp = melt(dat)
+tmp$name = factor(tmp$name, levels=dat$name)
+tmp$species = factor(tmp$species, levels=c("Mouse", "Human", "Shared", "Non-Enriched"))
+
 pdf("loop_te-enriched-species-intersections.pdf")
 ggplot(tmp, aes(x=variable, y=value, fill=species)) +
 geom_bar(stat="identity", position="fill")
 dev.off()
+
