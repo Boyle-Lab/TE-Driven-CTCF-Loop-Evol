@@ -52,7 +52,48 @@ geom_bar(stat='identity', position='fill')
 dev.off()
 
 
-## Figures 3C-3D, and supplementary figure 7 are a combination of bar plots and Upset plots. The bar chart at the top of the figure is plotted separately from the set size bar chart and set illustration dot plot, and then combined by hand in illustrator to produce the final figure...
+## Figure 3C shows the spatial distribution of phastCons conservation scores across 500 bp
+## windows surrounding the annotated CTCF ChIP-seq peak in TE-derived loop anchors, broken
+## down by conservation class.
+
+# Human-mouse data are used in Figure 3H:
+loop_ctcf_data = read.table("/nfs/boylelab_turbo/mouseENCODE.new/CTCF-TE-Analysis/ctcf_loop_intersection.hg19.txt", header=FALSE, stringsAsFactors=FALSE, sep="\t")
+colnames(loop_ctcf_data) = c("id_cp", "chrom", "start1", "end1", "start2", "end2", "iab", "fdr", "cell", "species", "id_ctcf", "chromStart_ctcf", "chromEnd_ctcf", "signalValue_ctcf", "peak")
+test2 = compile_class_bigwig_scores(dat.GM12878, loop_ctcf_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "CH12", size=500)
+# Convert data to long format matrix. For some reason, the "melt" function doesn't play well here...
+dat2 = convert_to_long(test2)
+# Plot the data as lines...
+pdf("loop-conservation_vs_phastcons.GM12878-to-CH12.pdf")
+ggplot(dat2, aes(x=position, y=value, colour=cat))+
+geom_line()
+dev.off()
+
+# Mouse-human shows the same trends, but noisier due to the small set sizes.
+test = compile_class_bigwig_scores(dat.CH12, hic_ctcf_data, "/data/UCSC/PHASTCONS/mm9/phastCons30way.placental.bigWig", "GM12878", "K562", size=1000)
+dat = convert_to_long(test)
+ggplot(dat, aes(x=position, y=value, colour=cat))+
+geom_line()
+
+# Human-human data have similar distributions for all classes, with only slight conservation drop at the peaks.
+test3 = compile_class_bigwig_scores(dat.GM12878, loop_ctcf_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "K562", size=1000, cats=c("C","B2","B1","B0"))
+dat3 = convert_to_long(test3, cats=c("C","B2","B1","B0"))
+ggplot(dat3, aes(x=position, y=value, colour=cat))+
+geom_line()
+
+
+## Supplemental Figure 8 contains the PhastCons score plots for TE-Derived loops only, showing that
+## the same score trends are evident.
+test2 = compile_class_bigwig_scores(dat.GM12878, loop_te_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "CH12", size=500)
+# Convert data to long format matrix. For some reason, the "melt" function doesn't play well here...
+dat2 = convert_to_long(test2)
+# Plot the data as lines...
+pdf("Supplemental_Figure-8_loop-conservation-wrt-phastCons_TE-derived-loops-only.pdf")
+ggplot(dat2, aes(x=position, y=value, colour=cat))+
+geom_line()
+dev.off()
+
+
+## Figures 4A-4B, and supplementary figure 7 are a combination of bar plots and Upset plots. The bar chart at the top of the figure is plotted separately from the set size bar chart and set illustration dot plot, and then combined by hand in illustrator to produce the final figure...
 
 # Generate the bar plot components...
 
@@ -549,29 +590,3 @@ pdf("TE-enrichment-class-by-conservation-class.dotplot.human-to-human.2.pdf")
 ggplot(dat, aes(x=class, y=value)) +
 geom_point()
 dev.off()
-
-## Figure 3H shows the spatial distribution of phastCons conservation scores across 500 bp
-## windows surrounding the annotated CTCF ChIP-seq peak in TE-derived loop anchors, broken
-## down by conservation class.
-
-# Human-mouse data are used in Figure 3H:
-test2 = compile_class_bigwig_scores(dat.GM12878, loop_te_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "CH12", size=1000)
-# Convert data to long format matrix. For some reason, the "melt" function doesn't play well here...
-dat2 = convert_to_long(test2)
-# Plot the data as lines...
-pdf("loop-conservation_vs_phastcons.GM12878-to-CH12.pdf")
-ggplot(dat2, aes(x=position, y=value, colour=cat))+
-geom_line()
-dev.off()
-
-# Mouse-human shows the same trends, but much noisier due to the small set sizes.
-test = compile_class_bigwig_scores(dat.CH12, hic_te_data, "/data/UCSC/PHASTCONS/mm9/phastCons30way.placental.bigWig", "GM12878", "K562", size=1000)
-dat = convert_to_long(test)
-ggplot(dat, aes(x=position, y=value, colour=cat))+
-geom_line()
-
-# Human-human data have similar distributions for all classes, with only slight conservation drop at the peaks.
-test3 = compile_class_bigwig_scores(dat.GM12878, loop_te_data, "/data/UCSC/PHASTCONS/hg19/phastCons46way.placental.bigWig", "K562", size=1000, cats=c("C","B2","B1","B0"))
-dat3 = convert_to_long(test3, cats=c("C","B2","B1","B0"))
-ggplot(dat3, aes(x=position, y=value, colour=cat))+
-geom_line()
