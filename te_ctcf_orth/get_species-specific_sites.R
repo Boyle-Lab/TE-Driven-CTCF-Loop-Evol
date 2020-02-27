@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript --vanilla
+
 df1 = read.table("tmp1", header=FALSE, sep="\t", stringsAsFactors=FALSE)
 df2 = read.table("tmp2", header=FALSE, sep="\t", stringsAsFactors=FALSE)
 rownames(df1) = df1$V4
