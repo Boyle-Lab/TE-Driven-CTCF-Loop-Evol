@@ -1,0 +1,13 @@
+####
+# Permutation Enrichment Testing pipeline.
+
+####
+# Initial intersections between CTCF binding sites and TEs in human
+# and mouse genomes was performed on the hadoop cluster using the
+# hive query described in ctcf_te_overlaps.q. The resulting data were
+# then extracted into a data file with the following command:
+# hdfs dfs -cat ctcf_te_enrichment/* > ctcf_te_intersection.all.txt
+
+####
+# Remaining analysis steps are in R.
+/usr/bin/env Rscript --vanilla do_permutation_tests.R
