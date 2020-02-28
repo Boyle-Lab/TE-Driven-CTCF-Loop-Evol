@@ -126,3 +126,60 @@ pdf("Fig-2d_te-frequencies-heatmap.binomial.pdf")
 ggplot(dat.melt, aes(x=variable, y=order, fill=value)) + geom_tile() + scale_fill_gradient(high=rgb(0.44,0.1,0.62), low="white") + theme(axis.text.y = element_text(size=4))
 dev.off()
 
+####
+# Figure 2e: Species-specific enrichment pie charts.
+
+# enriched_te_fams.txt was hand-curated to annotate species-specificity
+# of TE type enrichment.
+enr_te_fams = read.table("enriched_te_fams.txt", sep="\t", stringsAsFactors=FALSE, header=FALSE, col.names=c("species", "name"), row.names="name")
+
+all_ctcf_repeats$te_spec = enr_te_fams[all_ctcf_repeats$name_rmsk,"species"]
+all_ctcf_repeats[which(is.na(all_ctcf_repeats$te_spec)),"te_spec"] = "Non-Enriched"
+dat = melt(table(all_ctcf_repeats[,c("species","te_spec")]))
+dat$te_spec = factor(dat$te_spec, levels=c("Mouse", "Shared", "Human", "Non-Enriched"))
+
+pdf("frac_ctcf_enr.pie.hg19.pdf")
+ggplot(dat[which(dat$species=="hg19"),], aes(x=species, y=value, fill=te_spec)) +
+geom_bar(stat="identity", position="fill") +
+coord_polar("y", start=0)
+dev.off()
+
+pdf("frac_ctcf_enr.pie.mm9.pdf")
+ggplot(dat[which(dat$species=="mm9"),], aes(x=species, y=value, fill=te_spec)) +
+geom_bar(stat="identity", position="fill") +
+coord_polar("y", start=0)
+dev.off()
+
+####
+# Figure 2f: Motif scores in enriched, non-enriched, random repeats, and background seqs
+all_motif_scores = read.table("all-repeats_CTCF-ren.motif_scores.txt", sep="\t", stringsAsFactors=FALSE, header=FALSE)
+
+# motif scores for enriched and non-enriched repeats
+all_ancestral_motif_scores = all_motif_scores[which(all_motif_scores$V1 %in% unique(all_ctcf_repeats$name_rmsk)),]
+all_ancestral_motif_scores$max = unlist(lapply(all_ancestral_motif_scores[,6], function(str) { x = as.numeric(unlist(strsplit(str, ","))); return(max(x, na.rm=TRUE))}))
+all_ancestral_motif_scores$source = "consensus"
+all_ancestral_motif_scores[which(!(all_ancestral_motif_scores$V1 %in% enr_te_fams$name)),"source"] = "Non-Enriched"
+all_ancestral_motif_scores[which(all_ancestral_motif_scores$V1 %in% enr_te_fams$name),"source"] = "Enriched"
+
+# Background sequences
+library("rtracklayer")
+library("regioneR")
+all_ancestral_motif_scores$length = unlist(lapply(all_ancestral_motif_scores[,6], function(str) { return(length(as.numeric(unlist(strsplit(str, ",")))))}))
+bg_regions = createRandomRegions(nregions=nrow(all_ancestral_motif_scores), length.mean = mean(all_ancestral_motif_scores$length), length.sd = sd(all_ancestral_motif_scores$length), genome = "hg19", non.overlapping = TRUE)
+tmp = import("../..//data/motifs/hg19.CTCF.ren.bigWig", selection=bg_regions, as="NumericList")
+tmp = unlist(lapply(tmp, max))
+dat = all_ancestral_motif_scores[,c("source", "max")]
+dat = rbind(dat, data.frame("source" = rep("Background", length(tmp)), "max" = tmp))
+
+# Random repeats
+rand_motif_scores = all_repeat_scores[sample(all_repeat_scores$V1, nrow(all_ancestral_motif_scores)),]
+rand_motif_scores$max = unlist(lapply(rand_motif_scores[,6], function(str) { x = as.numeric(unlist(strsplit(str, ","))); return(max(x, na.rm=TRUE))}))
+rand_motif_scores$source = "random_repeats"
+dat = rbind(dat, rand_motif_scores[,c("source", "max")])
+dat$source = factor(dat$source, levels=c("Enriched", "Non-Enriched", "random_repeats", "Background"))
+
+# Plot the data
+pdf("CTCF-bound-repeat-consensus_motif-scores.pdf")
+ggplot(dat, aes(x=source, y=max, fill=source)) +
+geom_boxplot(notch=TRUE)
+dev.off()

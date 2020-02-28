@@ -9,5 +9,9 @@
 # hdfs dfs -cat ctcf_te_enrichment/* > ctcf_te_intersection.all.txt
 
 ####
+# Next step is to pull out motif scores for use in Fig 2F
+/bin/bash get_ancestral_motif_scores.sh
+
+####
 # Remaining analysis steps are in R.
 /usr/bin/env Rscript --vanilla do_binomial_tests.R
