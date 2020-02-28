@@ -1,8 +1,8 @@
 # Calculate odds ratios for species-specificity of CTCF binding words.
 
 # Load the whole-genome CTCF motif predictions
-CTCF_genomic.hg19 = read.table("../data/motifs/FIMO/CTCF.hg19.bed", header=FALSE, stringsAsFactors=FALSE, sep="\t")
-CTCF_genomic.mm9 = read.table("../data/motifs/FIMO/CTCF.mm9.bed", header=FALSE, stringsAsFactors=FALSE, sep="\t")
+CTCF_genomic.hg19 = read.table("../../data/motifs/FIMO/CTCF.hg19.bed", header=FALSE, stringsAsFactors=FALSE, sep="\t")
+CTCF_genomic.mm9 = read.table("../../data/motifs/FIMO/CTCF.mm9.bed", header=FALSE, stringsAsFactors=FALSE, sep="\t")
 colnames(CTCF_genomic.hg19) = c("chrom", "start", "end", "name", "score", "strand", "word")
 colnames(CTCF_genomic.mm9) = c("chrom", "start", "end", "name", "score", "strand", "word")
 
@@ -45,13 +45,12 @@ bound_rpt_word_enr.hg19 = calc_rpt_enrichments(bound_rmsk_motifs.hg19, word_coun
 dat = bound_rpt_word_enr.hg19[which(bound_rpt_word_enr.hg19$specific_fg > 0 & bound_rpt_word_enr.hg19$pval_cor <= 10e-40),]
 dat = rbind(dat, bound_rpt_word_enr.mm9[which(bound_rpt_word_enr.mm9$specific_fg > 0 & bound_rpt_word_enr.mm9$pval_cor <= 10e-40),])
 dat$species = c(rep("human", 5), rep("mouse", 5))
-write.table(dat, sep="\t", col.names=TRUE, row.names=TRUE, quote=FALSE, file="Supplemental-Table-5_species-specific-word-enriched-TEs.txt")
+write.table(dat, sep="\t", col.names=TRUE, row.names=TRUE, quote=FALSE, file="Supplemental-Table-4_species-specific-word-enriched-TEs.txt")
 
-# For each of the TE types observed in our binomial tests, get the word-enrichment stats for the most frequent CTCF motif-word.
+# For each of the TE types observed in our binomial tests, get the word-enrichment stats for the most frequent CTCF motif-word. This is presented in Supplementary Table 5.
 source("get_top_enr.R")
-binomial_enriched_te = read.table("../TE-CTCF-Enrichment/row-order.txt", stringsAsFactors=FALSE, header=FALSE, sep="\t")
+binomial_enriched_te = read.table("row-order.txt", stringsAsFactors=FALSE, header=FALSE, sep="\t")
 binomial_enriched_te = binomial_enriched_te$V2
 tmp.hg = get_te_word_data(bound_rmsk_motifs.hg19, word_counts_rmsk.all.df, binomial_enriched_te, "hg19")
 tmp.mm = get_te_word_data(bound_rmsk_motifs.mm9, word_counts_rmsk.all.df, binomial_enriched_te, "mm9")
-tmp = cbind(tmp.hg, tmp.mm)
-write.table(tmp, sep="\t", row.names=TRUE, col.names=TRUE, quote=FALSE, file="Supplemental-Table-4_top-enriched-words.binomial.txt")
+write.table(cbind(tmp.hg, tmp.mm), sep="\t", row.names=TRUE, col.names=TRUE, quote=FALSE, file="Supplemental-Table-5_top-enriched-words.binomial.txt")

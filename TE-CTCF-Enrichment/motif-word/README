@@ -1,0 +1,11 @@
+# Procedures for analyzing species-specific word content of CTCF-enriched TEs,
+# which reproduces procedures reported in: Schmidt, D., et al. (2012). Cell, 148(1-2), 335–348.
+#
+# In particular, we wanted to determine the species-specific word content of the TE families
+# we observed CTCF-binding enrichments for in human, to see if this shed any light on why
+# they had not been observed by Schmidt et al. previously. We hypothesized that, although
+# they are strongly enriched for CTCF binding, the families may not be enriched for species-
+# specific k-mers. However, our findings contradict this hypothesis and leave doubt as to why
+# human-specific enrichments were not observed in the Schmidt analysis.
+
+# All figures/tables and underlying datasets can be reproduced by running the commands in do_word_enrichments.sh
