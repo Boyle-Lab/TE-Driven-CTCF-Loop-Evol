@@ -1,0 +1,3 @@
+This folder contains code to run the phylogenetic analyses presented in Figure 3. The complete pipeline may be run by isssuing the commands in run_pipeline.sh:
+
+/bin/bash run_pipeline.sh
