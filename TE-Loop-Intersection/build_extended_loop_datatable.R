@@ -1,3 +1,5 @@
+# R functions for building the data tables.
+
 add_te_intersections = function(dat.loops, dat.te) {
     # Adds TE intersection columns to loop data
     # Loop data is assumed to have a single row

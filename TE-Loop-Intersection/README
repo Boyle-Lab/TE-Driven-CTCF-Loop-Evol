@@ -1,12 +1,14 @@
-# Procedures for finding intersections between transposable elements and 3D loop anchor elements
-# from human GM12878 and K562 cells, for RAD21 ChIA-pet loops, and from mouse CH12 cells, for
-# Hi-C loops.
+# Pipeline for analysis of overlap between TE-derived CTCF sites and chromatin loop
+# anchors in human GM12878 and K562 cells (RAD21 ChIA-pet data), and mouse CH12 cells
+# (Rao et al. Hi-C data). Data are presented in Fig. 4 and Supplementary Fig. 3.
 
-# First step intersects loop data with previously-produced TE/CTCF ChIP-seq data on the hadoop cluster.
-# This process is described in intersect-loop-te.q
+# Initial data preparation and table creation/loading are described in
+# ../data/hadoop/README and subfolders.
 
+# First step intersects loop data with TE/CTCF ChIP-seq data using a hive query
+# described in intersect-loop-te.q
 
-# Create data tables from data files on hdfs. Copy these to the local directory.
+# Data tables are then compiled with hdfs calls. Copy these to the local directory.
 hdfs dfs -cat ctcf_te_mt_intersection/* > ctcf_loop_te_motif_intersection.hg19.txt
 hdfs dfs -cat ctcf_mt_intersection/* > ctcf_loop_motif_intersection.hg19.txt
 hdfs dfs -cat ctcf_te_intersection/* > ctcf_loop_te_intersection.hg19.txt
@@ -14,5 +16,5 @@ hdfs dfs -cat ctcf_te_mt_intersection/* > ctcf_hic_te_motif_intersection.hg19.tx
 hdfs dfs -cat ctcf_mt_intersection/* > ctcf_hic_motif_intersection.hg19.txt
 hdfs dfs -cat ctcf_te_intersection/* > ctcf_hic_te_intersection.hg19.txt
 
-# Complete the analysis in R for production of Figure 2 and supplemental table 6.
-# These procedures are in te-loop-intersection.R
+# Remaining steps to build the figures are in...
+/usr/bin/env Rscript --vanilla te-loop-intersection.R
