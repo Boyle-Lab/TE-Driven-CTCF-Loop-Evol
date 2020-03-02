@@ -183,3 +183,6 @@ pdf("CTCF-bound-repeat-consensus_motif-scores.pdf")
 ggplot(dat, aes(x=source, y=max, fill=source)) +
 geom_boxplot(notch=TRUE)
 dev.off()
+
+# Save data structures used in other analyses.
+save(all_repeats, all_ctcf_repeats, ctcf_te_enr, row_order, file="binomial_enrichments.Rdata")
