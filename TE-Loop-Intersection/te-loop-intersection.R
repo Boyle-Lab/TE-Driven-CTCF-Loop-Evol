@@ -138,3 +138,6 @@ pdf("loop_te-enriched-species-intersections.pdf")
 ggplot(tmp, aes(x=variable, y=value, fill=species)) +
 geom_bar(stat="identity", position="fill")
 dev.off()
+
+# Save objects used elsewhere
+save(dat.GM12878, dat.CH12, dat.K562, annotated_loop_data, file="loop_intersection.Rdata")
