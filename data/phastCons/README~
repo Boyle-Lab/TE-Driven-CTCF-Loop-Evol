@@ -1,5 +1,0 @@
-# 9/14/2016 -- AGD
-wget http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz
-wget http://www.repeatmasker.org/genomes/mm9/RepeatMasker-rm328-db20090604/mm9.fa.out.gz
-
-for file in hg19.fa.out.gz mm9.fa.out.gz ; do zcat $file | tail -n $(($(zcat $file | wc -l) - 3)) | awk '{split($11, A, "/"); if (A[2]) fam=A[2]; else fam=A[1]; printf "%s\t%d\t%d\t%s.%s.%s\t%s\n", $5, $6-1, $7, $10, A[1], fam, $2}' | gzip > $(basename $file .fa.out.gz).rmsk.bed.gz ; done
