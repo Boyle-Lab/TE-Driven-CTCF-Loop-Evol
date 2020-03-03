@@ -20,13 +20,6 @@ dat.GM12878 = intersect_cons_te(loop_conservation_data, dat.GM12878, "CH12", "K5
 dat.K562 = intersect_cons_te(loop_conservation_data, dat.K562, "CH12", "GM12878")
 dat.CH12 = intersect_cons_te(loop_conservation_data, dat.CH12, "GM12878", "K562")
 
-## Compile tabular data to incorporate into supplementary table 6
-# First put all cell-wise data into a single list...  
-dat = mget(ls(pattern = "dat.[A-Z]"))
-names(dat) = lapply(names(dat), function (e) {unlist(strsplit(e, '.', fixed=TRUE))[2]}) 
-write.table(compile_summary_data(dat), row.names=FALSE, col.names=TRUE, sep="\t", quote=FALSE, file="TE-derived-loop-cons.txt")
-
-
 ## Generate stacked bar charts for supplementary figure 6
 dat.classes = read.table("RAD21_loops.stats.dat", header=TRUE, stringsAsFactors=FALSE, sep = "\t")
 dat.classes$B2 = dat.classes$B2S+dat.classes$B2D
@@ -163,3 +156,5 @@ ggplot(dat2, aes(x=position, y=value, colour=cat))+
 geom_line()
 dev.off()
 
+# Save data used elsewhere.
+save(dat.GM12878, dat.CH12, dat.K562, file="loop-cons.Rdata")
