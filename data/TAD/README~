@@ -1,0 +1,7 @@
+# TAD annotations per Arrowhead domains from Rao and Huntley, 2014.
+
+# Retrieve data from GEO
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_primary%2Breplicate_Arrowhead_domainlist.txt.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_K562_Arrowhead_domainlist.txt.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_CH12-LX_Arrowhead_domainlist.txt.gz
+

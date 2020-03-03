@@ -1,0 +1,9 @@
+# TAD annotations per Arrowhead domains from Rao and Huntley, 2014.
+
+# Retrieve data from GEO
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_primary%2Breplicate_Arrowhead_domainlist.txt.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_K562_Arrowhead_domainlist.txt.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_CH12-LX_Arrowhead_domainlist.txt.gz
+
+# Prepare a data frame for R analysis
+for spp in hg19 mm9; do if [ $spp = "mm9" ]; then zcat mm9/CH12/GSE63525_CH12-LX_Arrowhead_domainlist.txt.gz | awk '{if (NR > 1) {printf "%s\t%d\t%d\t%f\tmm9\tCH12\n", $1, $2, $3, $8} }' >> rao-and-huntley-2014_arrowhead-domains.txt ; else for cell in K562 GM12878 ; do zcat $spp/$cell/*_Arrowhead_domainlist.txt.gz | awk -v CELL=$cell -v SPP=$spp '{if (NR > 1) {printf "chr%s\t%d\t%d\t%f\t%s\t%s\n", $1, $2, $3, $8, SPP, CELL} }' >> rao-and-huntley-2014_arrowhead-domains.txt ; done ; fi ; done
