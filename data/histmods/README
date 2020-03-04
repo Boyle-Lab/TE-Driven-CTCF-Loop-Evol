@@ -1,0 +1,52 @@
+######
+# CH12
+
+# H3K4me3 (labelled as signal)
+wget https://www.encodeproject.org/files/ENCFF001MXD/@@download/ENCFF001MXD.bigWig
+# H3K4me1 (labelled as signal)
+wget https://www.encodeproject.org/files/ENCFF001KAI/@@download/ENCFF001KAI.bigWig
+# H3K27me3 (signal)
+wget https://www.encodeproject.org/files/ENCFF001LVZ/@@download/ENCFF001LVZ.bigWig
+# H3K27ac (signal)
+wget https://www.encodeproject.org/files/ENCFF001KBG/@@download/ENCFF001KBG.bigWig
+
+#########
+# GM12878
+
+# H3K4me3 (fc over control)
+wget https://www.encodeproject.org/files/ENCFF818GNV/@@download/ENCFF818GNV.bigWig
+# H3K4me1 (fc over control)
+wget https://www.encodeproject.org/files/ENCFF682WPF/@@download/ENCFF682WPF.bigWig
+# H3K27me3 (fc over control)
+wget https://www.encodeproject.org/files/ENCFF167NBF/@@download/ENCFF167NBF.bigWig
+# H3K27ac (fc over control)
+wget https://www.encodeproject.org/files/ENCFF180LKW/@@download/ENCFF180LKW.bigWig
+
+######
+# K562
+
+# H3K4me3 (fc over control)
+https://www.encodeproject.org/files/ENCFF291SWG/@@download/ENCFF291SWG.bigWig
+# H3K4me1 (fc over control)
+wget https://www.encodeproject.org/files/ENCFF526QTS/@@download/ENCFF526QTS.bigWig
+# H3K27me3 (fc over control)
+wget https://www.encodeproject.org/files/ENCFF312LYO/@@download/ENCFF312LYO.bigWig
+# H3K27ac (fc over control)
+wget https://www.encodeproject.org/files/ENCFF010PHG/@@download/ENCFF010PHG.bigWig
+
+###
+# Links for convenience
+ln -s ENCFF001MXD.bigWig CH12.H3K4me3.bigWig
+ln -s ENCFF001KAI.bigWig CH12.H3K4me1.bigWig
+ln -s ENCFF001LVZ.bigWig CH12.H3K27me3.bigWig
+ln -s ENCFF001KBG.bigWig CH12.H3K27ac.bigWig
+
+ln -s ENCFF818GNV.bigWig GM12878.H3K4me3.bigWig
+ln -s ENCFF682WPF.bigWig GM12878.H3K4me1.bigWig
+ln -s ENCFF167NBF.bigWig GM12878.H3K27me3.bigWig
+ln -s ENCFF180LKW.bigWig GM12878.H3K27ac.bigWig
+
+ln -s ENCFF291SWG.bigWig K562.H3K4me3.bigWig
+ln -s ENCFF526QTS.bigWig K562.H3K4me1.bigWig
+ln -s ENCFF312LYO.bigWig K562.H3K27me3.bigWig
+ln -s ENCFF010PHG.bigWig K562.H3K27ac.bigWig
