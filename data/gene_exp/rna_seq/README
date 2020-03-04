@@ -1,0 +1,7 @@
+normCountsComplete.tab contains normalized gene expression values for human GM12878 and K562 cells, and mouse CH12 and MEL cells. These were prepared from the BAM alignment files from the RNA-seq datasets cited in the Source Data file. These were normalized using an aggressive method designed to correct for batch effects, described in:
+
+Gilad Y., Mizrahi-Man O. A reanalysis of mouse ENCODE comparative gene expression data. F1000Res. 2015; 4:121–153.
+
+The data were originally prepared for another study with the complete process described here:
+
+Adam G Diehl, Alan P Boyle, Conserved and species-specific transcription factor co-binding patterns drive divergent gene regulation in human and mouse, Nucleic Acids Research, Volume 46, Issue 4, 28 February 2018, Pages 1878–1894, https://doi.org/10.1093/nar/gky018
