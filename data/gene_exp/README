@@ -1,0 +1,14 @@
+# Get knownGenes tables from UCSC and convert bigBed to bed
+wget https://hgdownload.soe.ucsc.edu/gbdb/hg19/knownGene.bb
+bigBedToBed knownGene.bb knownGenes.hg19.bed
+wget https://hgdownload.soe.ucsc.edu/gbdb/mm9/knownGene.bb
+bigBedToBed knownGene.bb knownGenes.mm9.bed
+
+# Reduce into BED files with one maximal-length entry per gene annotation,
+# based on conversion of UCSC transcript IDs to gene symbols, usign tables
+# retrieved from ENSEMBL/BioMart..
+for SPP in hg19 mm9 ; do unique-genes.pl knownGenes.$SPP.bed --convert-ids <(cat ucsc2geneId.$SPP.tab | awk '{printf "%s\t%s\n", $1, $5}') > genes.$SPP.bed ; done
+
+# orthologs.hg-mm.txt is a table of one-to-one gene orthologs between humand and mouse. It is derived from http://compbio.mit.edu/modencode/orthologs/http://compbio.mit.edu/modencode/orthologs/modencode.common.orth.txt.gz...
+wget http://compbio.mit.edu/modencode/orthologs/http://compbio.mit.edu/modencode/orthologs/modencode.common.orth.txt.gz
+zcat modencode.common.orth.txt | awk '{if ( ($2 == "human" || $2 == "mouse") && ($3 == "human" || $3 == "mouse") ) printf "%s\t%s\n", $4, $5}' | sed 's/human_//' | sed 's/mouse_//' > orthologs.hg-mm.txt
