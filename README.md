@@ -14,6 +14,6 @@ The remaining folders loosely correspond to the results sections/figures present
 4. Loop-Conservation
 5. Gene-Expression
 
-Some analyses include results of hadoop/hive queries. All code to reproduce the data tables and queries is included for those with access to a suitable hadoop host machine that wish to reproduce these steps. Full, unprocessed query results are included for those lacking access to suitable computing resources.
+Some analyses include results of hadoop/hive queries. All code to reproduce the data tables and queries is included for those with access to a hadoop cluster. Full, unprocessed query results are included for those lacking access to suitable computing resources.
 
 Please contact Adam Diehl (adadiehl@umich.edu) with technical questions/bug reports.
