@@ -16,4 +16,20 @@ The remaining folders loosely correspond to the results sections/figures present
 
 Some analyses include results of hadoop/hive queries. All code to reproduce the data tables and queries is included for those with access to a hadoop cluster. Full, unprocessed query results are included in the data/hadoop/results directory for those lacking access to suitable computing resources.
 
+## Dependencies
+Software tools required to run this analysis are described in the "Code Availability" section of the manuscript. These shoudl be retrieved directly from their respective repositories/web sites/authors. All remaining custom code referenced in the manuscript is provided within this repository.
+
+Perl scripts included in this repository may require installation of additional non-default modules in order to run properly. Known dependencies are listed below. Please let us know if we have missed any!
+
+1. Getopt::Long
+2. Bio::Seq
+3. Bio::SeqIO
+4. threads
+
+Python scripts included in this repository may also include non-default dependencies. It is recommended to run all python scripts within a Conda environment using Python 3.6.9. Known dependencies are listed below. Please let us know if we have missed any!
+
+1. pandas
+2. numpy
+3. tabix
+
 Please contact Adam Diehl (adadiehl@umich.edu) with technical questions/bug reports.
