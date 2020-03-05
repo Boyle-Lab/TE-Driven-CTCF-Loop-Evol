@@ -4,7 +4,7 @@ This repository can be used to reproduce source data and results contributing to
 
 >*Diehl AG, Ouyang N, and Boyle AP. Transposable elements contribute to cell and species-specific looping diversity and gene expression in mammalian genomes. Nature Com. (2020)*
 
-## Instructions.
+## Instructions
 
 All resources used to preprocess the source datasets are housed in the data directory. Each subdirectory contains a README file with links and processing steps to prepare the source data. **This must be completed prior to running any of the main analysis steps.**
 
