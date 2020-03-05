@@ -32,4 +32,5 @@ Python scripts included in this repository may also include non-default dependen
 2. numpy
 3. tabix
 
+## Questions and Bug Reports
 Please contact Adam Diehl (adadiehl@umich.edu) with technical questions/bug reports.
