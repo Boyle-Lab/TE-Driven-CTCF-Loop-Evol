@@ -8,6 +8,8 @@ get_bigwig_scores = function(dat, bigwig, stat="mean", na.rm=TRUE) {
     #	      with bigWig scores.
     # "bigwig" = Path to a bigWig file.
     # "stat" = the statistic to return for each region.
+    #          Use "full" to get a dataframe with all values
+    #	       for each region.
 
     require("rtracklayer")
     # Get full data from the bigWig file
@@ -35,7 +37,10 @@ get_bigwig_scores = function(dat, bigwig, stat="mean", na.rm=TRUE) {
     }
     if (stat == "stdev") {
 	return(unlist(lapply(res, function(x) { return(sd(x, na.rm=na.rm)) })))
-    }
+    } # else (stat == "full")
+    res = rbind.data.frame(lapply(res, unlist))
+    res = apply(res, 1, unlist)
+    rownames(res) = unlist(lapply(rownames(res), function(x){unlist(strsplit(x, "[.]"))[2]}))
     return(res)
 }
 
