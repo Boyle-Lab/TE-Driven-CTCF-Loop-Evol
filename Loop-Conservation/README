@@ -1,3 +1,7 @@
 Loop conservation analyses described in figures 5 and 6.
 
-The complete pipeline is contained in run_loop-cons_pipeline.sh.
+run_loop-cons_pipeline.sh contains code to apply conservation class labels at various resolutions used in the analysis. This should be run first.
+
+loop-cons.R contains code for producing data and plots for figures 5B (line 34), 5C (line 45), 5D (line 123)), 6 (line 23), and S9 (line 149).
+
+loop-te-cons.R contains code for producing data and plots for figures 6A-C (line 26), 6D-F (line 358), and 6G (line 418).
