@@ -1,6 +1,6 @@
 ####
 # Pipeline to assemble orthology data for CTCF sites used to
-# generate Figure 1A.
+# generate Figure 2A.
 
 ####
 # First step is finding the intersections between CTCF sites
